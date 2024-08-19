@@ -1,0 +1,42 @@
+<!--
+ * @Description: 
+ * @Author: didadida262
+ * @Date: 2024-04-15 11:10:47
+ * @LastEditors: didadida262
+ * @LastEditTime: 2024-07-23 09:37:09
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <title>React App</title>
+  </head>
+  <body>
+    <div id="root">roots</div>
+  </body>
+  <!-- <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script> -->
+  <script src="./myRender_v2.js"></script>
+  <!-- <script src="./myCreateElement.js"></script> -->
+
+  <script>
+    const VNode = myCreateElement(
+      'div',
+      {
+        title: 'title',
+        id: 'id',
+      },
+      '一段文本....川崎重工',
+    );
+    console.log('VNode>>', VNode);
+    const root = document.getElementById('root');
+    console.log('root>>>', root);
+    myRender(VNode, root);
+  </script>
+</html>

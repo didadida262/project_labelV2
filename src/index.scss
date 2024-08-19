@@ -1,0 +1,145 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer {
+  :root {
+    --background: #ffffff;
+    --foreground: #09090b;
+    --border: #e3e3e7;
+  }
+
+  .dark {
+    --background: #09090b;
+    --foreground: #f9f9f9;
+    --border: #27272a;
+  }
+}
+
+@layer base {
+  * {
+    @apply box-border border-[--border];
+  }
+
+  body {
+    @apply bg-[--background] text-[--foreground];
+  }
+}
+
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
+    Microsoft YaHei, Arial, sans-serif;
+  color: var(--text-primary-color);
+  background-color: var(--bg-primary-color);
+}
+
+html {
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+#root {
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+div:focus {
+  outline: none;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: ' ';
+    clear: both;
+    height: 0;
+  }
+}
+body,
+ul,
+p,
+h3,
+h4,
+h5,
+h6 {
+  padding: 0;
+  margin: 0;
+}
+
+.markBorderG {
+  border: 1px solid green;
+}
+.markBorderR {
+  border: 1px solid red;
+}
+.markBorderO {
+  border: 1px solid orange;
+}
+.test {
+  filter: blur(5px);
+}
+
+.shooting-star {
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 0 2px 1px #fff;
+  animation: shootingStar 2s linear 1;
+}
+
+@keyframes shootingStar {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(100px) rotate(0deg);
+  }
+  25% {
+    transform: translate(-50%, -50%) rotate(90deg) translateX(100px)
+      rotate(-90deg);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(180deg) translateX(100px)
+      rotate(-180deg);
+  }
+  75% {
+    transform: translate(-50%, -50%) rotate(270deg) translateX(100px)
+      rotate(-270deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) translateX(100px)
+      rotate(-360deg);
+  }
+}
+
+.sky {
+  background-color: #000;
+  width: 200px;
+  height: 100px;
+  position: relative;
+}

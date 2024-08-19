@@ -1,0 +1,13 @@
+.PathItemComponent {
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+    .PathItemComponent-item {
+        width: 100%;
+        height: 35px;
+        border-radius: 5px;
+    }
+    .PathItemComponent-item:hover {
+        cursor: pointer;
+    }
+}

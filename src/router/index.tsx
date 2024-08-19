@@ -3,7 +3,7 @@
  * @Author: didadida262
  * @Date: 2024-03-25 15:13:17
  * @LastEditors: didadida262
- * @LastEditTime: 2024-08-19 17:48:15
+ * @LastEditTime: 2024-08-19 18:10:56
  */
 
 import { Suspense, lazy } from "react";
@@ -18,7 +18,13 @@ import LabelComponent from "../pages/Label";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <LabelComponent />
+    // element: <LabelComponent />,
+    children: [
+      {
+        index: true,
+        element: <LabelComponent />
+      }
+    ]
   }
 ]);
 export default router;

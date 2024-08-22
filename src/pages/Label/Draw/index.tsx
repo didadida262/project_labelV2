@@ -3,7 +3,7 @@
  * @Author: didadida262
  * @Date: 2024-03-14 02:04:27
  * @LastEditors: didadida262
- * @LastEditTime: 2024-08-19 17:50:25
+ * @LastEditTime: 2024-08-22 10:46:10
  */
 import paper from "paper";
 import React from "react";
@@ -19,6 +19,7 @@ const DrawComponent = props => {
   const { activeTool } = props;
   const canvasRef = useRef(null) as any;
   const initPoint = useRef(new paper.Point(0, 0));
+  const [zoom, setZoom] = useState(1);
 
   const onMouseDown = e => {
     initPoint.current = e.point;
@@ -54,9 +55,46 @@ const DrawComponent = props => {
       raster.fitBounds(paper.view.bounds, false);
     };
   };
+  const changeZoom = (delta, p) => {
+    let currentProject = paper.project;
+    let view = currentProject.view;
+    let oldZoom = view.zoom;
+    let c = view.center;
+    let factor = 0.11 + zoom;
+
+    let newZoom = delta < 0 ? oldZoom * factor : oldZoom / factor;
+    let beta = oldZoom / newZoom;
+    let pc = p.subtract(c);
+    let a = p.subtract(pc.multiply(beta)).subtract(c);
+
+    return { zoom: newZoom, offset: a };
+  };
+  const addWheelListener = () => {
+    canvasRef.current.addEventListener("wheel", event => {
+      event.preventDefault();
+      // 获取滚轮的 deltaY 属性，判断滚动方向
+      const delta = event.deltaY;
+      // // 更新视图的缩放比例和中心点
+      const viewPoint = {
+        x: event.offsetX,
+        y: event.offsetY
+      };
+      console.log("viewPoint>>>", viewPoint);
+      const newPoint = paper.project.view.viewToProject(viewPoint);
+      const newZoom = changeZoom(delta, newPoint).zoom;
+      console.log("newPoint>>>", newPoint);
+      console.log("newZoom>>>", newZoom);
+      paper.view.zoom = newZoom;
+      paper.view.center = newPoint;
+    });
+  };
   useEffect(() => {
     initCanvas();
     drawPic();
+    addWheelListener();
+    // return () => {
+    //   canvasRef.current.removeListener("wheel");
+    // };
   }, []);
   useEffect(
     () => {

@@ -3,7 +3,7 @@
  * @Author: didadida262
  * @Date: 2024-03-14 00:32:06
  * @LastEditors: didadida262
- * @LastEditTime: 2024-08-19 18:08:28
+ * @LastEditTime: 2024-08-22 10:10:43
  */
 import { message } from "antd";
 import paper from "paper";
@@ -75,7 +75,7 @@ const LabelComponent = () => {
         </div>
         <div>
           <ButtonCommon
-            className="w-full text-[12px]"
+            className="w-[100px] text-[12px]"
             type={EButtonType.SIMPLE}
             onClick={() => {
               paper.view.element.toBlob(function(blob: any) {

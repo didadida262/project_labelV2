@@ -3,7 +3,7 @@
  * @Author: didadida262
  * @Date: 2024-03-14 02:04:27
  * @LastEditors: didadida262
- * @LastEditTime: 2024-08-22 10:46:10
+ * @LastEditTime: 2024-09-03 10:08:08
  */
 import paper from "paper";
 import React from "react";
@@ -91,7 +91,7 @@ const DrawComponent = props => {
   useEffect(() => {
     initCanvas();
     drawPic();
-    addWheelListener();
+    // addWheelListener();
     // return () => {
     //   canvasRef.current.removeListener("wheel");
     // };

@@ -3,11 +3,12 @@
  * @Author: didadida262
  * @Date: 2024-03-14 00:32:06
  * @LastEditors: didadida262
- * @LastEditTime: 2024-08-22 10:48:24
+ * @LastEditTime: 2024-10-11 11:09:06
  */
 import { message } from "antd";
 import paper from "paper";
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
 import pattern from "@/styles/pattern";
@@ -32,21 +33,19 @@ const LabelComponent = () => {
   };
   useEffect(
     () => {
-      console.log(currentPath);
-      if (currentPath) {
-        const len = categories.length;
-        const newPath = {
-          key: len,
-          name: `标注数据:${len + 1}`,
-          path: currentPath
-        };
-        setcategories(prevItems => [...prevItems, newPath]);
-      }
+      if (!currentPath) return;
+      const ID = uuidv4();
+      const newPath = {
+        key: ID,
+        name: ID,
+        path: currentPath
+      };
+      console.log("新增数据>>>", newPath);
+      setcategories(prevItems => [...prevItems, newPath]);
     },
     [currentPath]
   );
   const submitPath = data => {
-    console.log("data>>>", data);
     setcurrentPath(data);
   };
   return (

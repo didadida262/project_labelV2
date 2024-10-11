@@ -3,7 +3,7 @@
  * @Author: didadida262
  * @Date: 2024-03-19 12:13:47
  * @LastEditors: didadida262
- * @LastEditTime: 2024-10-11 11:25:09
+ * @LastEditTime: 2024-10-11 11:29:54
  */
 import { Button } from "antd";
 import paper from "paper";
@@ -50,11 +50,14 @@ const pointerComponent = props => {
       cursorPoint = null;
     }
   };
-  const dragView = e => {
+  const handleDragView = e => {
     const delta = initPoint.subtract(e.point);
     const currentProject: paper.Project = paper.project;
     const currentCenter = currentProject.view.center;
     currentProject.view.center = currentCenter.add(delta);
+  };
+  const handleDragPath = e => {
+    hitResult.item.position = e.point;
   };
   const initTool = () => {
     tool = new paper.Tool();
@@ -66,16 +69,18 @@ const pointerComponent = props => {
       console.log("hitResult>>>>", hitResult);
     };
     tool.onMouseDrag = e => {
-      console.warn("hitResult>>>>", hitResult);
       if (!hitResult) {
-        dragView(e);
+        handleDragView(e);
         return;
       }
+      removeCursor();
       switch (hitResult.type) {
         case "segment":
-          removeCursor();
           const segment = hitResult.segment;
           segment.point = e.point;
+          break;
+        case "fill":
+          handleDragPath(e);
           break;
       }
     };

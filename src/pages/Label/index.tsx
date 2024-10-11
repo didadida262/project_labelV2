@@ -3,7 +3,7 @@
  * @Author: didadida262
  * @Date: 2024-03-14 00:32:06
  * @LastEditors: didadida262
- * @LastEditTime: 2024-10-11 11:09:06
+ * @LastEditTime: 2024-10-11 11:17:12
  */
 import { message } from "antd";
 import paper from "paper";
@@ -41,6 +41,7 @@ const LabelComponent = () => {
         path: currentPath
       };
       console.log("新增数据>>>", newPath);
+      console.log("paper>>>", paper);
       setcategories(prevItems => [...prevItems, newPath]);
     },
     [currentPath]

@@ -3,7 +3,7 @@
  * @Author: didadida262
  * @Date: 2024-03-19 12:13:47
  * @LastEditors: didadida262
- * @LastEditTime: 2024-08-22 10:39:30
+ * @LastEditTime: 2024-10-11 11:25:09
  */
 import { Button } from "antd";
 import paper from "paper";
@@ -25,9 +25,10 @@ const pointerComponent = props => {
   let hitResult = null as any;
   let tool = null as any;
   const hitOptions = {
+    // type: fill(类似矩形框)、segment（点）、pixel（raster）
     segments: true,
-    // stroke: true,
-    // fill: true,
+    stroke: true,
+    fill: true,
     tolerance: 2
     // match: hit => {
     //   return !hit.item.hasOwnProperty('indicator') && !hit.item.parent.hasOwnProperty('ignore')
@@ -49,6 +50,12 @@ const pointerComponent = props => {
       cursorPoint = null;
     }
   };
+  const dragView = e => {
+    const delta = initPoint.subtract(e.point);
+    const currentProject: paper.Project = paper.project;
+    const currentCenter = currentProject.view.center;
+    currentProject.view.center = currentCenter.add(delta);
+  };
   const initTool = () => {
     tool = new paper.Tool();
     tool.name = name;
@@ -60,15 +67,16 @@ const pointerComponent = props => {
     };
     tool.onMouseDrag = e => {
       console.warn("hitResult>>>>", hitResult);
-      if (hitResult && hitResult.segment) {
-        removeCursor();
-        const segment = hitResult.segment;
-        segment.point = e.point;
-      } else {
-        const delta = initPoint.subtract(e.point);
-        const currentProject: paper.Project = paper.project;
-        const currentCenter = currentProject.view.center;
-        currentProject.view.center = currentCenter.add(delta);
+      if (!hitResult) {
+        dragView(e);
+        return;
+      }
+      switch (hitResult.type) {
+        case "segment":
+          removeCursor();
+          const segment = hitResult.segment;
+          segment.point = e.point;
+          break;
       }
     };
     tool.onMouseMove = e => {

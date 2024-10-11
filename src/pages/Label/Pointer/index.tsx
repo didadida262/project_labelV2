@@ -3,7 +3,7 @@
  * @Author: didadida262
  * @Date: 2024-03-19 12:13:47
  * @LastEditors: didadida262
- * @LastEditTime: 2024-10-11 11:29:54
+ * @LastEditTime: 2024-10-11 13:47:06
  */
 import { Button } from "antd";
 import paper from "paper";
@@ -69,8 +69,9 @@ const pointerComponent = props => {
       console.log("hitResult>>>>", hitResult);
     };
     tool.onMouseDrag = e => {
+      console.log("hitResult>>>>drag", hitResult);
+
       if (!hitResult) {
-        handleDragView(e);
         return;
       }
       removeCursor();
@@ -81,6 +82,9 @@ const pointerComponent = props => {
           break;
         case "fill":
           handleDragPath(e);
+          break;
+        case "pixel":
+          handleDragView(e);
           break;
       }
     };

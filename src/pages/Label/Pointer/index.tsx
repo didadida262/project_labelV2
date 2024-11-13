@@ -3,7 +3,7 @@
  * @Author: didadida262
  * @Date: 2024-03-19 12:13:47
  * @LastEditors: didadida262
- * @LastEditTime: 2024-10-11 13:47:06
+ * @LastEditTime: 2024-11-13 10:17:25
  */
 import { Button } from "antd";
 import paper from "paper";
@@ -57,7 +57,14 @@ const pointerComponent = props => {
     currentProject.view.center = currentCenter.add(delta);
   };
   const handleDragPath = e => {
-    hitResult.item.position = e.point;
+    console.log("initPoint>>", initPoint);
+    console.log("e>>", e.point);
+    const delta = initPoint.subtract(e.point);
+    console.log("delta>>>", delta);
+    const path = hitResult.item;
+    console.log("path.position>>>", path.position);
+
+    const currentCenter = path.position;
   };
   const initTool = () => {
     tool = new paper.Tool();
@@ -69,8 +76,6 @@ const pointerComponent = props => {
       console.log("hitResult>>>>", hitResult);
     };
     tool.onMouseDrag = e => {
-      console.log("hitResult>>>>drag", hitResult);
-
       if (!hitResult) {
         return;
       }
@@ -84,6 +89,7 @@ const pointerComponent = props => {
           handleDragPath(e);
           break;
         case "pixel":
+          // 此处针对底图
           handleDragView(e);
           break;
       }

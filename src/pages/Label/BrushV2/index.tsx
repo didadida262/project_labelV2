@@ -1,14 +1,7 @@
-/*
- * @Description:
- * @Author: didadida262
- * @Date: 2024-03-14 02:31:48
- * @LastEditors: didadida262
- * @LastEditTime: 2025-01-10 23:37:45
- */
 import { Button } from "antd";
 import paper from "paper";
 import React, { useRef, useEffect } from "react";
-import { BsPencil } from "react-icons/bs";
+import { BsBrushFill } from "react-icons/bs";
 
 import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
 import { getRandomColor } from "@/utils/common_weapons";
@@ -18,35 +11,34 @@ import { judeToolExisted } from "../../../utils/paperjsWeapon";
 
 import "./index.scss";
 
-const PencilComponent = props => {
+const brushV2 = props => {
   const { activeTool, onClick, submitPath } = props;
-  const name = "pencil";
-  let path = {} as any;
+  const name = "brushv2";
+  let initPoint = new paper.Point(0, 0);
+  let path = null as any;
   let tool = null as any;
+  let color = getRandomColor();
+
   const initTool = () => {
-    console.log(`创建${name}-tool`);
     tool = new paper.Tool();
     tool.name = name;
-    tool.onMouseDown = e => {
-      console.log("down", e.point);
 
-      path = new paper.Path({
-        strokeColor: getRandomColor(),
-        strokeWidth: 5
-      });
-      path.add(e.point);
+    path = new paper.CompoundPath({});
+    tool.onMouseDown = e => {
+      color = getRandomColor();
+      path = new paper.Path();
+      path.fillColor = color;
+      initPoint = e.point;
     };
     tool.onMouseDrag = e => {
-      path.add(e.point);
-      console.log("drag", e.point);
+      path.add(e.middlePoint.add(e.delta.rotate(90).normalize().multiply(10)));
+      path.insert(
+        0,
+        e.middlePoint.subtract(e.delta.rotate(90).normalize().multiply(10))
+      );
     };
-    tool.onMouseMove = e => {};
     tool.onMouseUp = e => {
-      console.log("up", e.point);
-
-      path.add(e.point);
       submitPath(path.clone());
-      path.remove();
     };
     tool.activate();
   };
@@ -60,14 +52,16 @@ const PencilComponent = props => {
   useEffect(() => {
     return () => {};
   }, []);
+
   useEffect(
     () => {
       switchTool();
+      console.log("paper>>>", paper);
     },
     [activeTool]
   );
   return (
-    <div className="pencil mgb10">
+    <div className="brush mgb10">
       <ButtonCommon
         className={`w-[80px] ${pattern.flexCenter} ${activeTool === name
           ? "bg-white-5"
@@ -75,10 +69,10 @@ const PencilComponent = props => {
         type={EButtonType.SIMPLE}
         onClick={() => onClick(name)}
       >
-        <BsPencil />
+        <BsBrushFill />
       </ButtonCommon>
     </div>
   );
 };
 
-export default PencilComponent;
+export default brushV2;

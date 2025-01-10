@@ -3,27 +3,29 @@
  * @Author: didadida262
  * @Date: 2024-03-21 02:14:12
  * @LastEditors: didadida262
- * @LastEditTime: 2024-07-25 10:44:54
+ * @LastEditTime: 2025-01-10 23:40:46
  */
-import { Button } from 'antd';
-import paper from 'paper';
-import React, { useRef, useEffect } from 'react';
-import { BsBrush } from 'react-icons/bs';
+import { Button } from "antd";
+import paper from "paper";
+import React, { useRef, useEffect } from "react";
+import { BsBrush } from "react-icons/bs";
 
-import { ButtonCommon, EButtonType } from '@/components/ButtonCommon';
+import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
+import { getRandomColor } from "@/utils/common_weapons";
 
-import pattern from '../../../styles/pattern';
-import { judeToolExisted } from '../../../utils/paperjsWeapon';
+import pattern from "../../../styles/pattern";
+import { judeToolExisted } from "../../../utils/paperjsWeapon";
 
-import './index.scss';
+import "./index.scss";
 
-const brushComponent = (props) => {
-  const { activeTool, onClick } = props;
-  const name = 'brush';
+const brushComponent = props => {
+  const { activeTool, onClick, submitPath } = props;
+  const name = "brush";
   let initPoint = new paper.Point(0, 0);
   let circle = null as any;
   let path = null as any;
   let tool = null as any;
+  let color = getRandomColor();
 
   const initTool = () => {
     tool = new paper.Tool();
@@ -31,30 +33,33 @@ const brushComponent = (props) => {
     circle = new paper.Path.Circle({
       center: 0,
       radius: 10,
-      strokeColor: 'red',
+      strokeColor: color
     });
     path = new paper.CompoundPath({});
-    tool.onMouseDown = (e) => {
-      console.log('down', e.point);
+    tool.onMouseDown = e => {
+      console.log("down", e.point);
+      color = getRandomColor();
 
       initPoint = e.point;
     };
-    tool.onMouseDrag = (e) => {
+    tool.onMouseDrag = e => {
       new paper.Path.Circle({
         center: e.point,
         radius: 10,
-        fillColor: 'red',
+        fillColor: color
       });
     };
-    tool.onMouseMove = (e) => {
+    tool.onMouseMove = e => {
       circle.remove();
       circle = new paper.Path.Circle({
         center: e.point,
         radius: 10,
-        fillColor: 'red',
+        fillColor: color
       });
     };
-    tool.onMouseUp = (e) => {};
+    tool.onMouseUp = e => {
+      submitPath(path.clone());
+    };
     tool.activate();
   };
   const switchTool = () => {
@@ -68,18 +73,22 @@ const brushComponent = (props) => {
     return () => {};
   }, []);
 
-  useEffect(() => {
-    switchTool();
-    console.log('paper>>>', paper);
-  }, [activeTool]);
+  useEffect(
+    () => {
+      switchTool();
+      console.log("paper>>>", paper);
+    },
+    [activeTool]
+  );
   return (
-    <div className='brush mgb10'>
+    <div className="brush mgb10">
       <ButtonCommon
-        className={`w-[80px] ${pattern.flexCenter} ${
-          activeTool === name ? 'bg-white-5' : ''
-        }`}
+        className={`w-[80px] ${pattern.flexCenter} ${activeTool === name
+          ? "bg-white-5"
+          : ""}`}
         type={EButtonType.SIMPLE}
-        onClick={() => onClick(name)}>
+        onClick={() => onClick(name)}
+      >
         <BsBrush />
       </ButtonCommon>
     </div>

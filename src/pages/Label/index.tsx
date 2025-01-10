@@ -3,7 +3,7 @@
  * @Author: didadida262
  * @Date: 2024-03-14 00:32:06
  * @LastEditors: didadida262
- * @LastEditTime: 2024-10-11 11:17:12
+ * @LastEditTime: 2025-01-10 23:24:30
  */
 import { message } from "antd";
 import paper from "paper";
@@ -14,6 +14,7 @@ import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
 import pattern from "@/styles/pattern";
 
 import Brush from "./Brush";
+import BrushV2 from "./BrushV2";
 import CenterComponent from "./Center";
 import DrawComponent from "./Draw";
 import PathItem from "./PathItem";
@@ -73,6 +74,12 @@ const LabelComponent = () => {
             onClick={handleClickTool}
             submitPath={submitPath}
           />
+          <BrushV2
+            activeTool={activeTool}
+            onClick={handleClickTool}
+            submitPath={submitPath}
+          />
+
           <CenterComponent />
         </div>
         <div>

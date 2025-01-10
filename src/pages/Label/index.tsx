@@ -3,7 +3,7 @@
  * @Author: didadida262
  * @Date: 2024-03-14 00:32:06
  * @LastEditors: didadida262
- * @LastEditTime: 2025-01-10 23:24:30
+ * @LastEditTime: 2025-01-11 00:10:46
  */
 import { message } from "antd";
 import paper from "paper";
@@ -21,6 +21,7 @@ import PathItem from "./PathItem";
 import Pencil from "./Pencil";
 import Pointer from "./Pointer";
 import Rect from "./Rect";
+import Spray from "./Spray";
 // import ToolsComponent from './Tools'
 
 const LabelComponent = () => {
@@ -74,6 +75,12 @@ const LabelComponent = () => {
             onClick={handleClickTool}
             submitPath={submitPath}
           />
+          <Spray
+            activeTool={activeTool}
+            onClick={handleClickTool}
+            submitPath={submitPath}
+          />
+
           <BrushV2
             activeTool={activeTool}
             onClick={handleClickTool}

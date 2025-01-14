@@ -4,17 +4,17 @@ import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
+import Brush from "@/pages/Label/Tool/Brush";
+import BrushV2 from "@/pages/Label/Tool/BrushV2";
 import ColorProvider from "@/pages/Label/ColorProvider";
 import pattern from "@/styles/pattern";
 import Pencil from "@/pages/Label/Tool/Pencil";
+import Rect from "@/pages/Label/Tool/Rect";
 
-import Brush from "./Brush";
-import BrushV2 from "./BrushV2";
 import CenterComponent from "./Center";
 import DrawComponent from "./Draw";
 import PathItem from "./PathItem";
 import Pointer from "./Pointer";
-import Rect from "./Rect";
 import Spray from "./Spray";
 // import ToolsComponent from './Tools'
 

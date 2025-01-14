@@ -1,31 +1,29 @@
 import { Button } from "antd";
 import paper from "paper";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import { BsBrushFill } from "react-icons/bs";
 
 import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
 import { getRandomColor } from "@/utils/common_weapons";
-
-import pattern from "../../../styles/pattern";
-import { judeToolExisted } from "../../../utils/paperjsWeapon";
+import { judeToolExisted } from "@/utils/paperjsWeapon";
+import { ColorContext } from "@/pages/Label/ColorProvider";
+import pattern from "@/styles/pattern";
 
 import "./index.scss";
 
 const brushV2 = props => {
   const { activeTool, onClick, submitPath } = props;
+  const { color } = useContext(ColorContext);
   const name = "brushv2";
   let initPoint = new paper.Point(0, 0);
   let path = null as any;
   let tool = null as any;
-  let color = getRandomColor();
 
   const initTool = () => {
     tool = new paper.Tool();
     tool.name = name;
-
     path = new paper.CompoundPath({});
     tool.onMouseDown = e => {
-      color = getRandomColor();
       path = new paper.Path();
       path.fillColor = color;
       initPoint = e.point;
@@ -50,6 +48,8 @@ const brushV2 = props => {
   };
 
   useEffect(() => {
+    if (activeTool !== name) return;
+    initTool();
     return () => {};
   }, []);
 

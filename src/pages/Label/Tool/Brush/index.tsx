@@ -3,29 +3,28 @@
  * @Author: didadida262
  * @Date: 2024-03-21 02:14:12
  * @LastEditors: didadida262
- * @LastEditTime: 2025-01-10 23:40:46
+ * @LastEditTime: 2025-01-14 14:38:36
  */
 import { Button } from "antd";
 import paper from "paper";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useContext } from "react";
 import { BsBrush } from "react-icons/bs";
 
 import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
-import { getRandomColor } from "@/utils/common_weapons";
-
-import pattern from "../../../styles/pattern";
-import { judeToolExisted } from "../../../utils/paperjsWeapon";
+import { judeToolExisted } from "@/utils/paperjsWeapon";
+import { ColorContext } from "@/pages/Label/ColorProvider";
+import pattern from "@/styles/pattern";
 
 import "./index.scss";
 
 const brushComponent = props => {
   const { activeTool, onClick, submitPath } = props;
+  const { color } = useContext(ColorContext);
   const name = "brush";
   let initPoint = new paper.Point(0, 0);
   let circle = null as any;
   let path = null as any;
   let tool = null as any;
-  let color = getRandomColor();
 
   const initTool = () => {
     tool = new paper.Tool();
@@ -38,8 +37,6 @@ const brushComponent = props => {
     path = new paper.CompoundPath({});
     tool.onMouseDown = e => {
       console.log("down", e.point);
-      color = getRandomColor();
-
       initPoint = e.point;
     };
     tool.onMouseDrag = e => {
@@ -70,6 +67,8 @@ const brushComponent = props => {
   };
 
   useEffect(() => {
+    if (activeTool !== name) return;
+    initTool();
     return () => {};
   }, []);
 

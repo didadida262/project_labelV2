@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import paper from "paper";
 import React, { useRef, useEffect, useContext } from "react";
-import { BsPencil } from "react-icons/bs";
+import { BsTextareaResize } from "react-icons/bs";
 
 import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
 import { judeToolExisted } from "@/utils/paperjsWeapon";
@@ -10,30 +10,41 @@ import pattern from "@/styles/pattern";
 
 import "./index.scss";
 
-const PencilComponent = props => {
+const RectComponent = props => {
   const { activeTool, onClick, submitPath } = props;
   const { color } = useContext(ColorContext);
-  const name = "pencil";
+
+  const name = "rect";
   let path = {} as any;
   let tool = null as any;
+  let first = new paper.Point(0, 0);
+  const removeSelection = () => {
+    if (path) {
+      path.remove();
+    }
+  };
   const initTool = () => {
     tool = new paper.Tool();
     tool.name = name;
     tool.onMouseDown = e => {
       path = new paper.Path({
         strokeColor: color,
-        strokeWidth: 5
+        strokeWidth: 10
       });
-      path.add(e.point);
+      first = e.point;
     };
     tool.onMouseDrag = e => {
-      path.add(e.point);
-      console.log("drag", e.point);
+      removeSelection();
+      const width = e.point.x - first.x;
+      const height = e.point.y - first.y;
+      path = new paper.Path.Rectangle(
+        new paper.Point(first.x, first.y),
+        new paper.Size(width, height)
+      );
+      path.strokeColor = color;
     };
     tool.onMouseMove = e => {};
     tool.onMouseUp = e => {
-      console.log("up", e.point);
-
       path.add(e.point);
       submitPath(path.clone());
       path.remove();
@@ -46,7 +57,6 @@ const PencilComponent = props => {
       initTool();
     }
   };
-
   useEffect(
     () => {
       if (activeTool !== name) return;
@@ -62,7 +72,7 @@ const PencilComponent = props => {
     [activeTool]
   );
   return (
-    <div className="pencil mgb10">
+    <div className="rect mgb10">
       <ButtonCommon
         className={`w-[80px] ${pattern.flexCenter} ${activeTool === name
           ? "bg-white-5"
@@ -70,10 +80,10 @@ const PencilComponent = props => {
         type={EButtonType.SIMPLE}
         onClick={() => onClick(name)}
       >
-        <BsPencil />
+        <BsTextareaResize />
       </ButtonCommon>
     </div>
   );
 };
 
-export default PencilComponent;
+export default RectComponent;

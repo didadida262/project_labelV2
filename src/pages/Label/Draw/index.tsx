@@ -1,21 +1,17 @@
-/*
- * @Description:
- * @Author: didadida262
- * @Date: 2024-03-14 02:04:27
- * @LastEditors: didadida262
- * @LastEditTime: 2024-09-03 10:08:08
- */
 import paper from "paper";
-import React from "react";
+import React, { useContext } from "react";
 import { useState, useEffect, useRef } from "react";
+import { HexColorPicker } from "react-colorful";
 
 import { showPoint } from "@/utils/paperjsWeapon";
+import { ColorContext } from "@/pages/Label/ColorProvider";
 
 import imgurl from "../../../assets/只狼.jpeg";
 
 import "./index.scss";
 
 const DrawComponent = props => {
+  const { color, setColor } = useContext(ColorContext);
   const { activeTool } = props;
   const canvasRef = useRef(null) as any;
   const initPoint = useRef(new paper.Point(0, 0));
@@ -103,8 +99,11 @@ const DrawComponent = props => {
     [activeTool]
   );
   return (
-    <div className="draw">
+    <div className="draw relative">
       <canvas ref={canvasRef} className="w-full h-full" />
+      <div className="absolute right-0 top-0">
+        <HexColorPicker color={color} onChange={setColor} />
+      </div>
     </div>
   );
 };

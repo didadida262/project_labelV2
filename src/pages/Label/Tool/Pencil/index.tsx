@@ -1,37 +1,29 @@
-/*
- * @Description:
- * @Author: didadida262
- * @Date: 2024-03-14 02:31:48
- * @LastEditors: didadida262
- * @LastEditTime: 2025-01-10 23:37:45
- */
 import { Button } from "antd";
 import paper from "paper";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useContext } from "react";
 import { BsPencil } from "react-icons/bs";
 
 import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
 import { getRandomColor } from "@/utils/common_weapons";
+import { judeToolExisted } from "@/utils/paperjsWeapon";
+import pattern from "@/styles/pattern";
 
-import pattern from "../../../styles/pattern";
-import { judeToolExisted } from "../../../utils/paperjsWeapon";
+import { ColorContext } from "../../ColorProvider";
 
 import "./index.scss";
 
 const PencilComponent = props => {
   const { activeTool, onClick, submitPath } = props;
+  const { color, setColor } = useContext(ColorContext);
   const name = "pencil";
   let path = {} as any;
   let tool = null as any;
   const initTool = () => {
-    console.log(`创建${name}-tool`);
     tool = new paper.Tool();
     tool.name = name;
     tool.onMouseDown = e => {
-      console.log("down", e.point);
-
       path = new paper.Path({
-        strokeColor: getRandomColor(),
+        strokeColor: color,
         strokeWidth: 5
       });
       path.add(e.point);
@@ -57,9 +49,13 @@ const PencilComponent = props => {
     }
   };
 
-  useEffect(() => {
-    return () => {};
-  }, []);
+  useEffect(
+    () => {
+      initTool();
+      return () => {};
+    },
+    [color]
+  );
   useEffect(
     () => {
       switchTool();

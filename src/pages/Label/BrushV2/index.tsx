@@ -1,6 +1,6 @@
 import { Button } from "antd";
 import paper from "paper";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { BsBrushFill } from "react-icons/bs";
 
 import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";

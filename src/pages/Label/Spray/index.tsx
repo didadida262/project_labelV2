@@ -50,11 +50,6 @@ const Spray = props => {
         radius: radius,
         fillColor: getRandomColor()
       });
-
-      // let colorA = toColor(fillColor);
-      // let colorB = toColor(fillColor2);
-
-      // circle.fillColor = colorA.mix(colorB, random()).string();
     };
     tool.onMouseUp = e => {
       submitPath(path.clone());

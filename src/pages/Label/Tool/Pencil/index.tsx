@@ -1,3 +1,10 @@
+/*
+ * @Description: 
+ * @Author: didadida262
+ * @Date: 2024-07-31 10:32:27
+ * @LastEditors: didadida262
+ * @LastEditTime: 2025-01-16 23:39:27
+ */
 import { Button } from "antd";
 import paper from "paper";
 import React, { useRef, useEffect, useContext } from "react";
@@ -17,39 +24,34 @@ const PencilComponent = props => {
   let path = {} as any;
   let tool = null as any;
   const initTool = () => {
-    tool = new paper.Tool();
-    tool.name = name;
-    tool.onMouseDown = e => {
-      path = new paper.Path({
-        strokeColor: color,
-        strokeWidth: 5
-      });
-      path.add(e.point);
-    };
-    tool.onMouseDrag = e => {
-      path.add(e.point);
-      console.log("drag", e.point);
-    };
-    tool.onMouseMove = e => {};
-    tool.onMouseUp = e => {
-      console.log("up", e.point);
-
-      path.add(e.point);
-      submitPath(path.clone());
-      path.remove();
-    };
-    tool.activate();
-  };
-  const switchTool = () => {
-    if (activeTool !== name) return;
-    if (!judeToolExisted(paper, name)) {
-      initTool();
+    if (activeTool !== name) {
+      tool && tool.remove();
+    } else {
+      tool = new paper.Tool();
+      tool.name = name;
+      tool.onMouseDown = e => {
+        console.log("3>>>", color);
+        path = new paper.Path({
+          strokeColor: color,
+          strokeWidth: 5
+        });
+        path.add(e.point);
+      };
+      tool.onMouseDrag = e => {
+        path.add(e.point);
+      };
+      tool.onMouseMove = e => {};
+      tool.onMouseUp = e => {
+        console.log("up", e.point);
+        path.add(e.point);
+        submitPath(path.clone());
+        path.remove();
+      };
+      tool.activate();
     }
   };
-
   useEffect(
     () => {
-      if (activeTool !== name) return;
       initTool();
       return () => {};
     },
@@ -57,7 +59,8 @@ const PencilComponent = props => {
   );
   useEffect(
     () => {
-      switchTool();
+      initTool();
+      console.log(paper);
     },
     [activeTool]
   );

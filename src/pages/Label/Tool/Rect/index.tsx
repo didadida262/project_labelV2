@@ -24,42 +24,40 @@ const RectComponent = props => {
     }
   };
   const initTool = () => {
-    tool = new paper.Tool();
-    tool.name = name;
-    tool.onMouseDown = e => {
-      path = new paper.Path({
-        strokeColor: color,
-        strokeWidth: 10
-      });
-      first = e.point;
-    };
-    tool.onMouseDrag = e => {
-      removeSelection();
-      const width = e.point.x - first.x;
-      const height = e.point.y - first.y;
-      path = new paper.Path.Rectangle(
-        new paper.Point(first.x, first.y),
-        new paper.Size(width, height)
-      );
-      path.strokeColor = color;
-    };
-    tool.onMouseMove = e => {};
-    tool.onMouseUp = e => {
-      path.add(e.point);
-      submitPath(path.clone());
-      path.remove();
-    };
-    tool.activate();
-  };
-  const switchTool = () => {
-    if (activeTool !== name) return;
-    if (!judeToolExisted(paper, name)) {
-      initTool();
+    if (activeTool !== name) {
+      tool && tool.remove();
+    } else {
+      tool = new paper.Tool();
+      tool.name = name;
+      tool.onMouseDown = e => {
+        path = new paper.Path({
+          strokeColor: color,
+          strokeWidth: 10
+        });
+        first = e.point;
+      };
+      tool.onMouseDrag = e => {
+        removeSelection();
+        const width = e.point.x - first.x;
+        const height = e.point.y - first.y;
+        path = new paper.Path.Rectangle(
+          new paper.Point(first.x, first.y),
+          new paper.Size(width, height)
+        );
+        path.strokeColor = color;
+      };
+      tool.onMouseMove = e => {};
+      tool.onMouseUp = e => {
+        path.add(e.point);
+        submitPath(path.clone());
+        path.remove();
+      };
+      tool.activate();
     }
   };
+
   useEffect(
     () => {
-      if (activeTool !== name) return;
       initTool();
       return () => {};
     },
@@ -67,7 +65,8 @@ const RectComponent = props => {
   );
   useEffect(
     () => {
-      switchTool();
+      initTool();
+      console.log(paper);
     },
     [activeTool]
   );

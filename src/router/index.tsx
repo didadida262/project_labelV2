@@ -3,12 +3,14 @@
  * @Author: didadida262
  * @Date: 2024-03-25 15:13:17
  * @LastEditors: didadida262
- * @LastEditTime: 2024-08-22 10:08:46
+ * @LastEditTime: 2025-01-16 22:52:04
  */
 
 import { Suspense, lazy } from "react";
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
+
+import ColorProvider from "@/pages/Label/ColorProvider";
 
 import AuthRoute from "../components/AuthRoute";
 import LabelComponent from "../pages/Label";
@@ -18,11 +20,14 @@ import LabelComponent from "../pages/Label";
 const router = createBrowserRouter([
   {
     path: "/",
-    // element: <LabelComponent />,
     children: [
       {
         index: true,
-        element: <LabelComponent />
+        element: (
+          <ColorProvider>
+            <LabelComponent />
+          </ColorProvider>
+        )
       }
     ]
   }

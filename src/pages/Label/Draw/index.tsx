@@ -1,17 +1,14 @@
 import paper from "paper";
 import React, { useContext } from "react";
 import { useState, useEffect, useRef } from "react";
-import { HexColorPicker } from "react-colorful";
 
 import { showPoint } from "@/utils/paperjsWeapon";
-import { ColorContext } from "@/pages/Label/ColorProvider";
 
 import imgurl from "../../../assets/只狼.jpeg";
 
 import "./index.scss";
 
 const DrawComponent = props => {
-  const { color, setColor } = useContext(ColorContext);
   const { activeTool } = props;
   const canvasRef = useRef(null) as any;
   const initPoint = useRef(new paper.Point(0, 0));
@@ -35,6 +32,9 @@ const DrawComponent = props => {
         canvasRef.current.style.cursor = "crosshair";
         break;
       case "pencil":
+        canvasRef.current.style.cursor = "crosshair";
+        break;
+      case "brushv2":
         canvasRef.current.style.cursor = "crosshair";
         break;
       case "brush":
@@ -101,9 +101,6 @@ const DrawComponent = props => {
   return (
     <div className="draw relative">
       <canvas ref={canvasRef} className="w-full h-full" />
-      <div className="absolute right-0 top-0">
-        <HexColorPicker color={color} onChange={setColor} />
-      </div>
     </div>
   );
 };

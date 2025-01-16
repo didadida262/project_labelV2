@@ -20,6 +20,10 @@ const brushV2 = props => {
   let tool = null as any;
 
   const initTool = () => {
+    if (activeTool !== name) {
+      tool && tool.remove();
+      return;
+    }
     tool = new paper.Tool();
     tool.name = name;
     path = new paper.CompoundPath({});
@@ -40,23 +44,17 @@ const brushV2 = props => {
     };
     tool.activate();
   };
-  const switchTool = () => {
-    if (activeTool !== name) return;
-    if (!judeToolExisted(paper, name)) {
-      initTool();
-    }
-  };
-
-  useEffect(() => {
-    if (activeTool !== name) return;
-    initTool();
-    return () => {};
-  }, []);
-
   useEffect(
     () => {
-      switchTool();
-      console.log("paper>>>", paper);
+      initTool();
+      return () => {};
+    },
+    [color]
+  );
+  useEffect(
+    () => {
+      initTool();
+      console.log(paper);
     },
     [activeTool]
   );

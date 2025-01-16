@@ -3,7 +3,7 @@
  * @Author: didadida262
  * @Date: 2024-03-21 02:14:12
  * @LastEditors: didadida262
- * @LastEditTime: 2025-01-14 14:38:36
+ * @LastEditTime: 2025-01-16 23:42:20
  */
 import { Button } from "antd";
 import paper from "paper";
@@ -27,6 +27,10 @@ const brushComponent = props => {
   let tool = null as any;
 
   const initTool = () => {
+    if (activeTool !== name) {
+      tool && tool.remove();
+      return;
+    }
     tool = new paper.Tool();
     tool.name = name;
     circle = new paper.Path.Circle({
@@ -59,23 +63,18 @@ const brushComponent = props => {
     };
     tool.activate();
   };
-  const switchTool = () => {
-    if (activeTool !== name) return;
-    if (!judeToolExisted(paper, name)) {
-      initTool();
-    }
-  };
-
-  useEffect(() => {
-    if (activeTool !== name) return;
-    initTool();
-    return () => {};
-  }, []);
 
   useEffect(
     () => {
-      switchTool();
-      console.log("paper>>>", paper);
+      initTool();
+      return () => {};
+    },
+    [color]
+  );
+  useEffect(
+    () => {
+      initTool();
+      console.log(paper);
     },
     [activeTool]
   );

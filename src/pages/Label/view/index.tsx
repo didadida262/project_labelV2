@@ -56,7 +56,6 @@ const ViewComponent = () => {
     };
     project.view.onMouseMove = onMouseMove;
     project.view.onMouseUp = onMouseUp;
-    console.log("paper>>>", paper);
   };
   return (
     <div className="view">

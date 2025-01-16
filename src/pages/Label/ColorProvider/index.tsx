@@ -11,7 +11,7 @@ export default function ColorProvider(props: any) {
 
   useEffect(
     () => {
-      console.log("color>>>", color);
+      console.log("新color>>>", color);
     },
     [color]
   );

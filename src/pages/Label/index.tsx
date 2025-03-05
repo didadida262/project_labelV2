@@ -137,9 +137,13 @@ const LabelComponent = () => {
           </ButtonCommon>
         </div>
       </div>
-      <div className="h-full max-w-[calc(100%_-_320px)] flex-1 rounded-[4px] border-[1px] border-solid border-borderSecondColor ">
+      {/* <div className="center flex-col justify-center markBorderR"> */}
+      <div className={cn("h-full max-w-[calc(100%_-_320px)] flex-1 rounded-[4px] border-[1px] border-solid border-borderSecondColor")}>
         <DrawComponent activeTool={activeTool} />
       </div>
+      {/* <div>picturelist</div>
+      </div> */}
+
       <div className="w-[200px] h-full rounded-[4px] border-[1px] border-solid border-borderSecondColor ">
         <PathItem data={categories} />
       </div>

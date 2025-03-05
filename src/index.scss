@@ -143,3 +143,26 @@ h6 {
   height: 100px;
   position: relative;
 }
+
+@layer components {
+  // /* 自定义 Y 轴滚动条样式 */
+  ::-webkit-scrollbar {
+    width: 8px; /* Y 轴滚动条宽度 */
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #121416; /* Y 轴滚动条轨道背景 */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #121416; /* Y 轴滚动条滑块颜色 */
+    border-radius: 4px; /* Y 轴滚动条滑块圆角 */
+    border: 1px solid #383B45
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Y 轴滚动条滑块悬停颜色 */
+  }
+
+
+}

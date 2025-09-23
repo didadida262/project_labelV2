@@ -10,6 +10,10 @@
 <div align="center">
   <h3>🖼️ 专业的图像标注工具</h3>
   <p>基于 React + Paper.js 构建的现代化标注平台</p>
+  
+  <a href="https://project-label-v2.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/🌐-在线演示-00C7B7?style=for-the-badge&logo=vercel&logoColor=white" alt="在线演示" />
+  </a>
 </div>
 
 ## 项目概述
@@ -306,6 +310,7 @@ yarn test
 
 - **👨‍💻 项目维护者**: didadida262
 - **🔗 项目地址**: [GitHub Repository]
+- **🌐 在线演示**: [https://project-label-v2.vercel.app/](https://project-label-v2.vercel.app/)
 
 ## 📝 更新日志
 

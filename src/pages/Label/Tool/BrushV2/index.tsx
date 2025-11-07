@@ -7,6 +7,7 @@ import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
 import { getRandomColor } from "@/utils/common_weapons";
 import { judeToolExisted } from "@/utils/paperjsWeapon";
 import { ColorContext } from "@/pages/Label/ColorProvider";
+import { getRandomPencilColor } from "@/utils/randomColors";
 import pattern from "@/styles/pattern";
 
 import "./index.scss";
@@ -28,8 +29,10 @@ const brushV2 = props => {
     tool.name = name;
     path = new paper.CompoundPath({});
     tool.onMouseDown = e => {
+      // 每次开始绘制时生成新的随机颜色
+      const randomColor = getRandomPencilColor();
       path = new paper.Path();
-      path.fillColor = color;
+      path.fillColor = randomColor;
       initPoint = e.point;
     };
     tool.onMouseDrag = e => {

@@ -13,6 +13,7 @@ import { BsBrush } from "react-icons/bs";
 import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
 import { judeToolExisted } from "@/utils/paperjsWeapon";
 import { ColorContext } from "@/pages/Label/ColorProvider";
+import { getRandomPencilColor } from "@/utils/randomColors";
 import pattern from "@/styles/pattern";
 
 import "./index.scss";
@@ -25,6 +26,7 @@ const brushComponent = props => {
   let circle = null as any;
   let path = null as any;
   let tool = null as any;
+  let currentColor = null as any; // 存储当前绘制的颜色
 
   const initTool = () => {
     if (activeTool !== name) {
@@ -41,13 +43,15 @@ const brushComponent = props => {
     path = new paper.CompoundPath({});
     tool.onMouseDown = e => {
       console.log("down", e.point);
+      // 每次开始绘制时生成新的随机颜色
+      currentColor = getRandomPencilColor();
       initPoint = e.point;
     };
     tool.onMouseDrag = e => {
       new paper.Path.Circle({
         center: e.point,
         radius: 10,
-        fillColor: color
+        fillColor: currentColor
       });
     };
     tool.onMouseMove = e => {
@@ -55,7 +59,7 @@ const brushComponent = props => {
       circle = new paper.Path.Circle({
         center: e.point,
         radius: 10,
-        fillColor: color
+        fillColor: currentColor || color
       });
     };
     tool.onMouseUp = e => {

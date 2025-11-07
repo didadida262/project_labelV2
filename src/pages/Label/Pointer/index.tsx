@@ -17,7 +17,12 @@ import { judeToolExisted } from "../../../utils/paperjsWeapon";
 
 import "./index.scss";
 
-const pointerComponent = props => {
+interface PointerComponentProps {
+  activeTool: string;
+  onClick: (tool: string) => void;
+}
+
+const pointerComponent: React.FC<PointerComponentProps> = (props) => {
   const { activeTool, onClick } = props;
   const name = "pointer";
   let initPoint = new paper.Point(0, 0);
@@ -35,7 +40,7 @@ const pointerComponent = props => {
     // }
   };
 
-  const createCursor = point => {
+  const createCursor = (point: paper.Point) => {
     removeCursor();
     cursorPoint = new paper.Path.Circle({
       center: point,
@@ -50,13 +55,13 @@ const pointerComponent = props => {
       cursorPoint = null;
     }
   };
-  const handleDragView = e => {
+  const handleDragView = (e: paper.ToolEvent) => {
     const delta = initPoint.subtract(e.point);
     const currentProject: paper.Project = paper.project;
     const currentCenter = currentProject.view.center;
     currentProject.view.center = currentCenter.add(delta);
   };
-  const handleDragPath = e => {
+  const handleDragPath = (e: paper.ToolEvent) => {
     const delta = initPoint.subtract(e.point);
     const path = hitResult.item;
     const currentCenter = path.position;
@@ -64,12 +69,12 @@ const pointerComponent = props => {
   const initTool = () => {
     tool = new paper.Tool();
     tool.name = name;
-    tool.onMouseDown = e => {
+    tool.onMouseDown = (e: paper.ToolEvent) => {
       initPoint = e.point;
       const activateProject = paper.project;
       hitResult = activateProject.hitTest(e.point, hitOptions);
     };
-    tool.onMouseDrag = e => {
+    tool.onMouseDrag = (e: paper.ToolEvent) => {
       if (!hitResult) {
         return;
       }
@@ -88,7 +93,7 @@ const pointerComponent = props => {
           break;
       }
     };
-    tool.onMouseMove = e => {
+    tool.onMouseMove = (e: paper.ToolEvent) => {
       const activateProject = paper.project;
       hitResult = activateProject.hitTest(e.point, hitOptions);
       if (hitResult && hitResult.type === "segment") {
@@ -97,7 +102,7 @@ const pointerComponent = props => {
         removeCursor();
       }
     };
-    tool.onMouseUp = e => {};
+    tool.onMouseUp = (e: paper.ToolEvent) => {};
     tool.activate();
   };
   const switchTool = () => {

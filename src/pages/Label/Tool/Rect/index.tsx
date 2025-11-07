@@ -11,7 +11,13 @@ import pattern from "@/styles/pattern";
 
 import "./index.scss";
 
-const RectComponent = props => {
+interface RectComponentProps {
+  activeTool: string;
+  onClick: (tool: string) => void;
+  submitPath: (path: paper.Path) => void;
+}
+
+const RectComponent: React.FC<RectComponentProps> = (props) => {
   const { activeTool, onClick, submitPath } = props;
   const { color } = useContext(ColorContext);
 
@@ -33,7 +39,7 @@ const RectComponent = props => {
     } else {
       tool = new paper.Tool();
       tool.name = name;
-      tool.onMouseDown = e => {
+      tool.onMouseDown = (e: paper.ToolEvent) => {
         // 每次开始绘制时生成新的随机颜色对
         const colorPair = getRandomColorPair();
         fillColor = colorPair.fillColor;
@@ -45,7 +51,7 @@ const RectComponent = props => {
         });
         first = e.point;
       };
-      tool.onMouseDrag = e => {
+      tool.onMouseDrag = (e: paper.ToolEvent) => {
         removeSelection();
         const width = e.point.x - first.x;
         const height = e.point.y - first.y;
@@ -57,8 +63,8 @@ const RectComponent = props => {
         path.strokeWidth = 4; // 增加线条宽度
         path.fillColor = fillColor; // 使用相同的填充颜色
       };
-      tool.onMouseMove = e => {};
-      tool.onMouseUp = e => {
+      tool.onMouseMove = (e: paper.ToolEvent) => {};
+      tool.onMouseUp = (e: paper.ToolEvent) => {
         path.add(e.point);
         submitPath(path.clone());
         path.remove();

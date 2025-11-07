@@ -21,20 +21,27 @@ import Pointer from "./Pointer";
 import Spray from "./Spray";
 // import ToolsComponent from './Tools'
 
-const LabelComponent = () => {
-  const [activeTool, setactiveTool] = useState("pencil");
-  const [categories, setcategories] = useState([]) as any;
-  const [currentPath, setcurrentPath] = useState(null) as any;
+interface PathItem {
+  key: string;
+  name: string;
+  path: paper.Path;
+}
+
+const LabelComponent: React.FC = () => {
+  const [activeTool, setactiveTool] = useState<string>("pencil");
+  const [categories, setcategories] = useState<PathItem[]>([]);
+  const [currentPath, setcurrentPath] = useState<paper.Path | null>(null);
   const { color, setColor } = useContext(ColorContext);
-  const [colorSelector, setcolorSelector] = useState(false);
+  const [colorSelector, setcolorSelector] = useState<boolean>(false);
   const triggerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const handleClickTool = tool => {
+  const handleClickTool = (tool: string): void => {
     setactiveTool(tool);
     message.success(`激活${tool}`);
   };
-  const handleExportPicture = () => {
-    paper.view.element.toBlob(function(blob: any) {
+  const handleExportPicture = (): void => {
+    paper.view.element.toBlob(function(blob: Blob | null) {
+      if (!blob) return;
       let url = URL.createObjectURL(blob);
       let a = document.createElement("a");
       a.href = url;
@@ -53,7 +60,7 @@ const LabelComponent = () => {
     () => {
       if (!currentPath) return;
       const ID = uuidv4();
-      const newPath = {
+      const newPath: PathItem = {
         key: ID,
         name: ID,
         path: currentPath
@@ -62,7 +69,7 @@ const LabelComponent = () => {
     },
     [currentPath]
   );
-  const submitPath = data => {
+  const submitPath = (data: paper.Path): void => {
     setcurrentPath(data);
   };
   return (

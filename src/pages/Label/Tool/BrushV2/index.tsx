@@ -12,7 +12,13 @@ import pattern from "@/styles/pattern";
 
 import "./index.scss";
 
-const brushV2 = props => {
+interface BrushV2ComponentProps {
+  activeTool: string;
+  onClick: (tool: string) => void;
+  submitPath: (path: paper.Path) => void;
+}
+
+const brushV2: React.FC<BrushV2ComponentProps> = (props) => {
   const { activeTool, onClick, submitPath } = props;
   const { color } = useContext(ColorContext);
   const name = "brushv2";
@@ -28,21 +34,21 @@ const brushV2 = props => {
     tool = new paper.Tool();
     tool.name = name;
     path = new paper.CompoundPath({});
-    tool.onMouseDown = e => {
+    tool.onMouseDown = (e: paper.ToolEvent) => {
       // 每次开始绘制时生成新的随机颜色
       const randomColor = getRandomPencilColor();
       path = new paper.Path();
       path.fillColor = randomColor;
       initPoint = e.point;
     };
-    tool.onMouseDrag = e => {
+    tool.onMouseDrag = (e: paper.ToolEvent) => {
       path.add(e.middlePoint.add(e.delta.rotate(90).normalize().multiply(10)));
       path.insert(
         0,
         e.middlePoint.subtract(e.delta.rotate(90).normalize().multiply(10))
       );
     };
-    tool.onMouseUp = e => {
+    tool.onMouseUp = (e: paper.ToolEvent) => {
       submitPath(path.clone());
     };
     tool.activate();

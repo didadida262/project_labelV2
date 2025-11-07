@@ -5,7 +5,7 @@ import paper from "paper";
 // tools相关
 
 // 判断当前tool是否已存在
-export const judeToolExisted = (paper, name) => {
+export const judeToolExisted = (paper: typeof import('paper'), name: string): boolean => {
   const tools: Array<any> = paper.tools;
   const existedCurretnTool = tools.filter(item => item.name === name)[0];
   if (existedCurretnTool) {
@@ -16,7 +16,7 @@ export const judeToolExisted = (paper, name) => {
 };
 
 // 以左上角为视图原点， 获取试图范围内的随机点
-export const randomPoint = (WIDTH, HEIGHT) => {
+export const randomPoint = (WIDTH: number, HEIGHT: number): paper.Point => {
   return new paper.Point(WIDTH * Math.random(), HEIGHT * Math.random());
 };
 
@@ -30,8 +30,8 @@ export const getRandomDirection = (position: paper.Point, range: number) => {
 // 删除指定project的某一层
 export const removeLayer = (
   currentProject: paper.Project,
-  layerName: String
-) => {
+  layerName: string
+): void => {
   let target = currentProject.layers.filter(
     layer => layer.name === layerName
   )[0] as paper.Layer;
@@ -40,7 +40,7 @@ export const removeLayer = (
   }
 };
 // // 指定项目绘制坐标层次
-export const drawXY = (currentProject: paper.Project) => {
+export const drawXY = (currentProject: paper.Project): void => {
   if (!currentProject) {
     // throw "project null"
     return;
@@ -74,12 +74,12 @@ export const drawXY = (currentProject: paper.Project) => {
   });
 };
 // 获取视图级别的字体大小
-export const getViewFontSize = (currentProject: paper.Project) => {
+export const getViewFontSize = (currentProject: paper.Project): number => {
   const ratio = currentProject.view.zoom;
   return 16 / ratio;
 };
 //     // 获取视图级别的线大小
-export const getViewBorderSize = (currentProject: paper.Project) => {
+export const getViewBorderSize = (currentProject: paper.Project): number => {
   const ratio = currentProject.view.zoom;
   return 1 / ratio;
 };
@@ -221,7 +221,7 @@ export const getViewBorderSize = (currentProject: paper.Project) => {
 //   c2.remove()
 // }
 
-export const showPoint = (point, color) => {
+export const showPoint = (point: paper.Point, color: string): void => {
   const p = new paper.Path.Circle({
     center: point,
     radius: 8,

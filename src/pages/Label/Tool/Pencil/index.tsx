@@ -18,7 +18,13 @@ import pattern from "@/styles/pattern";
 
 import "./index.scss";
 
-const PencilComponent = props => {
+interface PencilComponentProps {
+  activeTool: string;
+  onClick: (tool: string) => void;
+  submitPath: (path: paper.Path) => void;
+}
+
+const PencilComponent: React.FC<PencilComponentProps> = (props) => {
   const { activeTool, onClick, submitPath } = props;
   const { color } = useContext(ColorContext);
   const name = "pencil";
@@ -31,7 +37,7 @@ const PencilComponent = props => {
     } else {
       tool = new paper.Tool();
       tool.name = name;
-      tool.onMouseDown = e => {
+      tool.onMouseDown = (e: paper.ToolEvent) => {
         // 每次开始绘制时生成新的随机颜色
         const randomColor = getRandomPencilColor();
         path = new paper.Path({
@@ -40,11 +46,11 @@ const PencilComponent = props => {
         });
         path.add(e.point);
       };
-      tool.onMouseDrag = e => {
+      tool.onMouseDrag = (e: paper.ToolEvent) => {
         path.add(e.point);
       };
-      tool.onMouseMove = e => {};
-      tool.onMouseUp = e => {
+      tool.onMouseMove = (e: paper.ToolEvent) => {};
+      tool.onMouseUp = (e: paper.ToolEvent) => {
         path.add(e.point);
         submitPath(path.clone());
         path.remove();

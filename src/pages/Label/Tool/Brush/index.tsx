@@ -18,7 +18,13 @@ import pattern from "@/styles/pattern";
 
 import "./index.scss";
 
-const brushComponent = props => {
+interface BrushComponentProps {
+  activeTool: string;
+  onClick: (tool: string) => void;
+  submitPath: (path: paper.Path) => void;
+}
+
+const brushComponent: React.FC<BrushComponentProps> = (props) => {
   const { activeTool, onClick, submitPath } = props;
   const { color } = useContext(ColorContext);
   const name = "brush";
@@ -41,19 +47,19 @@ const brushComponent = props => {
       strokeColor: color
     });
     path = new paper.CompoundPath({});
-    tool.onMouseDown = e => {
+    tool.onMouseDown = (e: paper.ToolEvent) => {
       // 每次开始绘制时生成新的随机颜色
       currentColor = getRandomPencilColor();
       initPoint = e.point;
     };
-    tool.onMouseDrag = e => {
+    tool.onMouseDrag = (e: paper.ToolEvent) => {
       new paper.Path.Circle({
         center: e.point,
         radius: 10,
         fillColor: currentColor
       });
     };
-    tool.onMouseMove = e => {
+    tool.onMouseMove = (e: paper.ToolEvent) => {
       circle.remove();
       circle = new paper.Path.Circle({
         center: e.point,
@@ -61,7 +67,7 @@ const brushComponent = props => {
         fillColor: currentColor || color
       });
     };
-    tool.onMouseUp = e => {
+    tool.onMouseUp = (e: paper.ToolEvent) => {
       submitPath(path.clone());
     };
     tool.activate();

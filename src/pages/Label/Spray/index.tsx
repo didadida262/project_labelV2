@@ -11,8 +11,14 @@ import { judeToolExisted } from "../../../utils/paperjsWeapon";
 
 import "./index.scss";
 
-const Spray = props => {
-  function mix(a, b, t) {
+interface SprayComponentProps {
+  activeTool: string;
+  onClick: (tool: string) => void;
+  submitPath: (path: paper.Path) => void;
+}
+
+const Spray: React.FC<SprayComponentProps> = (props) => {
+  function mix(a: number, b: number, t: number) {
     return a + (b - a) * t;
   }
   const { activeTool, onClick, submitPath } = props;
@@ -29,13 +35,13 @@ const Spray = props => {
     tool = new paper.Tool();
     tool.name = name;
     path = new paper.CompoundPath({});
-    tool.onMouseDown = e => {
+    tool.onMouseDown = (e: paper.ToolEvent) => {
       color = getRandomColor();
       path = new paper.Path();
       path.fillColor = color;
       initPoint = e.point;
     };
-    tool.onMouseDrag = e => {
+    tool.onMouseDrag = (e: paper.ToolEvent) => {
       const radius = mix(minRadius, maxRadius, Math.random());
       const offset = new paper.Point(
         mix(-jitter, jitter, Math.random()),
@@ -51,7 +57,7 @@ const Spray = props => {
         fillColor: getRandomColor()
       });
     };
-    tool.onMouseUp = e => {
+    tool.onMouseUp = (e: paper.ToolEvent) => {
       submitPath(path.clone());
     };
     tool.activate();

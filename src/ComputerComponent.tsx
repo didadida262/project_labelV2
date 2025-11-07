@@ -30,7 +30,7 @@ export default function ComputerComponent(props: IProps) {
     <button onClick={() => {dispatch(increment(10))}}>+</button>
     {/* <button onClick={() => {fetchData(dispatch)}}>异步修改数据</button> */}
     <ul>
-      {channelList.map((item) => <li key={item.id}>{item.name}</li>)}
+      {channelList.map((item: any) => <li key={item.id}>{item.name}</li>)}
     </ul>
     </div>
   </div>) 

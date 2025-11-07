@@ -33,7 +33,7 @@ export default function BigTurntable() {
       fonts: [{ text: '开始', top: '-10px' }]
     }
   ])
-  const handleEnd = prize => { // 抽奖结束会触发end回调
+  const handleEnd = (prize: any) => { // 抽奖结束会触发end回调
     alert('恭喜你抽到 ' + prize.fonts[0].text + ' 号奖品')
   }
   const handleStart = () => { // 点击抽奖按钮会触发star回调

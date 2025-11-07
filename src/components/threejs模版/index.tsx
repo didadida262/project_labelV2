@@ -5,7 +5,7 @@ import './index.scss'
 import * as Three from 'three'
 import { setOrbit, setAxes, setGrid, setGui} from '../../utils/threejsWeapon'
 
-const threejsComponent = (props) => {
+const threejsComponent: React.FC = () => {
   const canvasRef = useRef(null) as any
   let container = null as any
   let renderer = null as any

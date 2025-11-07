@@ -16,8 +16,8 @@ const userStore = createSlice({
 const reducer = userStore.reducer
 const  { setToken } = userStore.actions
 
-const fetchToken = (data) => {
-    return async (dispatch) => {
+const fetchToken = (data: any) => {
+    return async (dispatch: any) => {
       const res = await api.post('/signIn', data) as any
       dispatch(setToken(res.token))
       localStorage.setItem('token', res.token)

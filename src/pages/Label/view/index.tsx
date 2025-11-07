@@ -27,7 +27,7 @@ const ViewComponent = () => {
       raster.fitBounds(paper.view.bounds, true);
     };
   };
-  const onMouseDown = e => {
+  const onMouseDown = (e: paper.ToolEvent) => {
     setinitPoint(e.point);
   };
   const onMouseDrag = useSyncCallback(() => {
@@ -37,8 +37,8 @@ const ViewComponent = () => {
       pro.view.setCenter(newCenter);
     });
   });
-  const onMouseMove = e => {};
-  const onMouseUp = e => {};
+  const onMouseMove = (e: paper.ToolEvent) => {};
+  const onMouseUp = (e: paper.ToolEvent) => {};
   // 初始化画布，并确认相关参数初始值
   const init = () => {
     paper.setup(canvasRef.current);
@@ -46,7 +46,7 @@ const ViewComponent = () => {
     project.name = "test";
     project.view.setCenter(0, 0);
     project.view.onMouseDown = onMouseDown;
-    project.view.onMouseDrag = e => {
+    project.view.onMouseDrag = (e: paper.ToolEvent) => {
       setcurPoint(e.point);
       onMouseDrag();
     };

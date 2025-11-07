@@ -5,7 +5,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 
-const useSyncCallback = callback => {
+const useSyncCallback = (callback: () => void) => {
     const [proxyState, setProxyState] = useState({ current: false })
 
     const Func = useCallback(() => {

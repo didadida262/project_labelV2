@@ -11,15 +11,25 @@ import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
 
 import "./index.scss";
 
-const PathItemComponent = (props: any) => {
+interface PathItem {
+  key: string;
+  name: string;
+  path: paper.Path;
+}
+
+interface PathItemComponentProps {
+  data: PathItem[];
+}
+
+const PathItemComponent: React.FC<PathItemComponentProps> = (props) => {
   const { data } = props;
-  const handleClickPathItem = item => {
+  const handleClickPathItem = (item: PathItem) => {
     item.path.selected = !item.path.selected;
   };
   useEffect(() => {}, [data]);
   return (
     <div className="PathItemComponent pd5">
-      {data.map((item, index) => {
+      {data.map((item: PathItem, index: number) => {
         return (
           <div className="w-full mb-[5px] rounded-[0px]" key={index}>
             <ButtonCommon

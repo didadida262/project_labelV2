@@ -17,7 +17,7 @@ import { judeToolExisted } from "../../../utils/paperjsWeapon";
 
 import "./index.scss";
 
-const CenterComponent = props => {
+const CenterComponent: React.FC = () => {
   const name = "center";
 
   useEffect(() => {

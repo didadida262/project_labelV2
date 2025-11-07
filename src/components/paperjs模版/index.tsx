@@ -4,14 +4,14 @@ import { useState, useEffect, useRef } from 'react'
 import imgurl from '../../assets/只狼.jpeg'
 import './index.scss'
 
-const TadpolesComponent = (props) => {
+const TadpolesComponent: React.FC = () => {
   const canvasRef = useRef(null) as any
   const initPoint = useRef(new paper.Point(0, 0))
 
-  const onMouseDown = (e) => {
+  const onMouseDown = (e: paper.ToolEvent) => {
     initPoint.current = e.point
   }
-  const onMouseDrag = (e) => {
+  const onMouseDrag = (e: paper.ToolEvent) => {
   }
 
   const initCanvas = () => {

@@ -21,21 +21,21 @@ export const getRandomColor = () => {
  * @param {*} bytes 比特值大小
  * @return {*} MB单位值
  */
-export const formatBytes = (name, bytes) => {
+export const formatBytes = (name: string, bytes: number): string => {
   return name + ': ' + (bytes / 1024 / 1024).toFixed(2) + ' MB '
 }
 
-export const formatTime = (name, time) => {
+export const formatTime = (name: string, time: number): string => {
   return time / 1000 + 's'
 }
 
 /**
-   * @description: 程序耗时检测器
-   * @param {*} 输出名称
-   * @param {*} fn
-   * @return {*} 输出程序用时
-   */
-export const costTime = (name, fn) => {
+  * @description: 程序耗时检测器
+  * @param {*} 输出名称
+  * @param {*} fn
+  * @return {*} 输出程序用时
+  */
+export const costTime = (name: string, fn: () => void): void => {
   console.time(name)
   fn()
   console.timeEnd(name)

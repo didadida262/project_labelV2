@@ -8,16 +8,20 @@ import imgurl from "../../../assets/只狼.jpeg";
 
 import "./index.scss";
 
-const DrawComponent = props => {
+interface DrawComponentProps {
+  activeTool: string;
+}
+
+const DrawComponent: React.FC<DrawComponentProps> = (props) => {
   const { activeTool } = props;
   const canvasRef = useRef(null) as any;
   const initPoint = useRef(new paper.Point(0, 0));
   const [zoom, setZoom] = useState(1);
 
-  const onMouseDown = e => {
+  const onMouseDown = (e: paper.ToolEvent) => {
     initPoint.current = e.point;
   };
-  const onMouseDrag = e => {
+  const onMouseDrag = (e: paper.ToolEvent) => {
     const delta = initPoint.current.subtract(e.point);
     const newCenter = paper.project.view.center.add(delta);
     const view: paper.View = paper.project.view;
@@ -51,7 +55,7 @@ const DrawComponent = props => {
       raster.fitBounds(paper.view.bounds, false);
     };
   };
-  const changeZoom = (delta, p) => {
+  const changeZoom = (delta: number, p: paper.Point) => {
     let currentProject = paper.project;
     let view = currentProject.view;
     let oldZoom = view.zoom;
@@ -66,7 +70,7 @@ const DrawComponent = props => {
     return { zoom: newZoom, offset: a };
   };
   const addWheelListener = () => {
-    canvasRef.current.addEventListener("wheel", event => {
+    canvasRef.current.addEventListener("wheel", (event: WheelEvent) => {
       event.preventDefault();
       // 获取滚轮的 deltaY 属性，判断滚动方向
       const delta = event.deltaY;

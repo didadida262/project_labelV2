@@ -42,10 +42,10 @@ const brushV2: React.FC<BrushV2ComponentProps> = (props) => {
       initPoint = e.point;
     };
     tool.onMouseDrag = (e: paper.ToolEvent) => {
-      path.add(e.middlePoint.add(e.delta.rotate(90).normalize().multiply(10)));
+      path.add(e.middlePoint.add(e.delta.rotate(90, new paper.Point(0, 0)).normalize().multiply(10)));
       path.insert(
         0,
-        e.middlePoint.subtract(e.delta.rotate(90).normalize().multiply(10))
+        e.middlePoint.subtract(e.delta.rotate(90, new paper.Point(0, 0)).normalize().multiply(10))
       );
     };
     tool.onMouseUp = (e: paper.ToolEvent) => {

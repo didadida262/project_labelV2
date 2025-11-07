@@ -1,9 +1,12 @@
 import { getToken } from '../utils/token';
 import { Navigate } from 'react-router-dom';
-import React, { useEffect } from 'react';
+import React from 'react';
 
+interface AuthRouteProps {
+    children: React.ReactNode;
+}
 
-const AuthRoute = ({ children}) => {
+const AuthRoute: React.FC<AuthRouteProps> = ({ children }) => {
     const token = getToken()
     if (token) {
         return <>{children}</>

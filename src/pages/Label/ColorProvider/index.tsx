@@ -9,12 +9,6 @@ export const ColorContext = createContext({} as ColorContext);
 export default function ColorProvider(props: any) {
   const [color, setColor] = useState("#000000");
 
-  useEffect(
-    () => {
-      console.log("新color>>>", color);
-    },
-    [color]
-  );
   return (
     <ColorContext.Provider
       value={{

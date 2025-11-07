@@ -16,11 +16,9 @@ const PencilComponent = (props: IToolItemProps) => {
   const [pencil, setpencil] = useState(null)
   const createPencile = new paper.Tool()
   const onMouseDown = (e) => {
-    console.log('pencile>>>>down', e)
     
   }
   const onMouseDrag = (e) => {
-    console.log('pencil--drag')
     
   }
   const onMouseMove = (e) => {

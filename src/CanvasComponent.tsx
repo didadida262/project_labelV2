@@ -25,7 +25,6 @@ export default class CanvasComponent extends React.Component {
     this.tool = null;
   }
   initCanvas = () => {
-    console.log("this.canvasRef", this.canvasRef);
     paper.setup(this.canvasRef.current);
     this.project = paper.project;
     this.project.name = "canvas";
@@ -48,8 +47,6 @@ export default class CanvasComponent extends React.Component {
     this.tool.onMouseUp = (e: paper.MouseEvent) => {
       this.onMouseUp(e);
     };
-    console.log("init--this.project", this.project);
-    console.log("init--paper", paper);
   };
   onMouseDown(event: paper.MouseEvent): void {
     removeLayer(this.project, "layerXY");
@@ -62,7 +59,6 @@ export default class CanvasComponent extends React.Component {
   draw() {}
   componentDidMount(): void {
     if (this.num === 1) return;
-    console.log("componentDidMount>>>>>>>>>");
     this.initCanvas();
     this.draw();
     drawXY(this.project);

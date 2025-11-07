@@ -38,7 +38,6 @@ export default function BigTurntable() {
   }
   const handleStart = () => { // 点击抽奖按钮会触发star回调
     myLucky.current.play()
-    console.log('myLucky>>>', myLucky)
     setTimeout(() => {
       // const index = Math.random() * 6 >> 0
       const index = 1

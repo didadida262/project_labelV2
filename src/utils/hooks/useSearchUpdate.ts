@@ -18,7 +18,6 @@ export function useSearchUpdate() {
         searchParams.set(key, params[key]);
       }
     }
-    console.log('跳转');
   };
 
   const deleteRouterParams = (keys: string[]) => {
@@ -27,7 +26,6 @@ export function useSearchUpdate() {
       searchParams.delete(key);
     }
     const hasSearchKey = !!searchParams.size;
-    console.log('跳转');
   };
 
   return { putRouterParams, deleteRouterParams };

@@ -57,7 +57,6 @@ const brushV2 = props => {
   useEffect(
     () => {
       initTool();
-      console.log(paper);
     },
     [activeTool]
   );

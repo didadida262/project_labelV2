@@ -34,7 +34,6 @@ const PencilComponent = props => {
       tool.onMouseDown = e => {
         // 每次开始绘制时生成新的随机颜色
         const randomColor = getRandomPencilColor();
-        console.log("3>>>", randomColor);
         path = new paper.Path({
           strokeColor: randomColor,
           strokeWidth: 5
@@ -46,7 +45,6 @@ const PencilComponent = props => {
       };
       tool.onMouseMove = e => {};
       tool.onMouseUp = e => {
-        console.log("up", e.point);
         path.add(e.point);
         submitPath(path.clone());
         path.remove();
@@ -64,7 +62,6 @@ const PencilComponent = props => {
   useEffect(
     () => {
       initTool();
-      console.log(paper);
     },
     [activeTool]
   );

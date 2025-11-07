@@ -70,7 +70,6 @@ const Spray = props => {
   useEffect(
     () => {
       switchTool();
-      console.log("paper>>>", paper);
     },
     [activeTool]
   );

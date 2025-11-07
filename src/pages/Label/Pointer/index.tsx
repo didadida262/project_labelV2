@@ -57,13 +57,8 @@ const pointerComponent = props => {
     currentProject.view.center = currentCenter.add(delta);
   };
   const handleDragPath = e => {
-    console.log("initPoint>>", initPoint);
-    console.log("e>>", e.point);
     const delta = initPoint.subtract(e.point);
-    console.log("delta>>>", delta);
     const path = hitResult.item;
-    console.log("path.position>>>", path.position);
-
     const currentCenter = path.position;
   };
   const initTool = () => {
@@ -73,7 +68,6 @@ const pointerComponent = props => {
       initPoint = e.point;
       const activateProject = paper.project;
       hitResult = activateProject.hitTest(e.point, hitOptions);
-      console.log("hitResult>>>>", hitResult);
     };
     tool.onMouseDrag = e => {
       if (!hitResult) {

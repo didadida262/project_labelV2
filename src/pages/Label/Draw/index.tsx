@@ -75,11 +75,8 @@ const DrawComponent = props => {
         x: event.offsetX,
         y: event.offsetY
       };
-      console.log("viewPoint>>>", viewPoint);
       const newPoint = paper.project.view.viewToProject(viewPoint);
       const newZoom = changeZoom(delta, newPoint).zoom;
-      console.log("newPoint>>>", newPoint);
-      console.log("newZoom>>>", newZoom);
       paper.view.zoom = newZoom;
       paper.view.center = newPoint;
     });

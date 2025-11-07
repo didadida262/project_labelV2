@@ -44,7 +44,6 @@ const LabelComponent = () => {
     });
   };
   useClickAway(dropdownRef, (e: MouseEvent) => {
-    console.log("useClickAway>>>>");
     // 如果點擊事件的目標不在 triggerRef 中，則關閉 dropdown
     if (triggerRef.current && !triggerRef.current.contains(e.target as Node)) {
       setcolorSelector(false);
@@ -59,7 +58,6 @@ const LabelComponent = () => {
         name: ID,
         path: currentPath
       };
-      console.log("新增数据>>>", newPath);
       setcategories(prevItems => [...prevItems, newPath]);
     },
     [currentPath]

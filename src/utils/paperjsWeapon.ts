@@ -32,8 +32,6 @@ export const removeLayer = (
   currentProject: paper.Project,
   layerName: String
 ) => {
-  console.log("removeLayer--currentProject", currentProject);
-
   let target = currentProject.layers.filter(
     layer => layer.name === layerName
   )[0] as paper.Layer;
@@ -43,7 +41,6 @@ export const removeLayer = (
 };
 // // 指定项目绘制坐标层次
 export const drawXY = (currentProject: paper.Project) => {
-  console.log("drawXY>>>");
   if (!currentProject) {
     // throw "project null"
     return;

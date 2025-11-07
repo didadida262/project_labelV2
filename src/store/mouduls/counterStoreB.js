@@ -22,7 +22,6 @@ const fetchData = () => {
     return async (dispatch) => {
       const response = await axios.get('/api/v1/dataSource');
       const data = response.data.result
-      console.log('data>>>', data)
       dispatch(setChannelList(data.users))
     }
 }

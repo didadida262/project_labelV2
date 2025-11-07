@@ -77,7 +77,6 @@ const RectComponent = props => {
   useEffect(
     () => {
       initTool();
-      console.log(paper);
     },
     [activeTool]
   );

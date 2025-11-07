@@ -8,8 +8,6 @@ import useSyncCallback from "./test";
 import "./index.scss";
 
 const ViewComponent = () => {
-  console.log(">>...");
-
   const [initPoint, setinitPoint] = useState({}) as any;
   const [curPoint, setcurPoint] = useState({}) as any;
   const canvasRef = useRef(null) as any;
@@ -30,11 +28,9 @@ const ViewComponent = () => {
     };
   };
   const onMouseDown = e => {
-    console.log("tool--down");
     setinitPoint(e.point);
   };
   const onMouseDrag = useSyncCallback(() => {
-    console.log("tool--drag");
     const delta = initPoint.subtract(curPoint);
     paper.projects.forEach((pro: any) => {
       const newCenter = pro.view.center.add(delta);

@@ -23,7 +23,6 @@ export default function TypeWriter({ text, className }: Props) {
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) => Math.round(latest));
   const displayText = useTransform(rounded, (latest) => {
-    console.log('...', latest);
     if (latest === text.length && !done) {
       setDone(true);
     }

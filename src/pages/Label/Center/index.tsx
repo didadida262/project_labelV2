@@ -30,7 +30,6 @@ const CenterComponent = props => {
         className={`w-[80px] ${pattern.flexCenter} `}
         type={EButtonType.SIMPLE}
         onClick={() => {
-          console.log(paper);
           const originPoint = paper.project.activeLayer.children[0].position;
           paper.project.view.center = originPoint;
         }}

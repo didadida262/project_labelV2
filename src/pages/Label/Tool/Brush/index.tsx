@@ -42,7 +42,6 @@ const brushComponent = props => {
     });
     path = new paper.CompoundPath({});
     tool.onMouseDown = e => {
-      console.log("down", e.point);
       // 每次开始绘制时生成新的随机颜色
       currentColor = getRandomPencilColor();
       initPoint = e.point;
@@ -78,7 +77,6 @@ const brushComponent = props => {
   useEffect(
     () => {
       initTool();
-      console.log(paper);
     },
     [activeTool]
   );

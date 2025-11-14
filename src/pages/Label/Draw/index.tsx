@@ -42,6 +42,10 @@ const DrawComponent: React.FC<DrawComponentProps> = (props) => {
       case "brush":
         canvasRef.current.style.cursor = "none";
         break;
+      case "eraser":
+        // 使用自定义橡皮擦光标
+        canvasRef.current.style.cursor = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"%23333\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21\"/><path d=\"M22 21H7\"/><path d=\"m5 11 9 9\"/></svg>') 12 12, auto";
+        break;
     }
   };
   const initCanvas = () => {
@@ -54,6 +58,8 @@ const DrawComponent: React.FC<DrawComponentProps> = (props) => {
     whiteboard.fillColor = new paper.Color("#FFFFFF");
     whiteboard.strokeColor = new paper.Color("#E0E0E0");
     whiteboard.strokeWidth = 1;
+    // 标记为白板，防止被橡皮擦擦除
+    whiteboard.data = { isWhiteboard: true };
     // 将白板移到最底层，确保标注在上面
     whiteboard.sendToBack();
   };

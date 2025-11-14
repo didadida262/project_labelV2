@@ -19,6 +19,7 @@ import DrawComponent from "./Draw";
 import PathItem from "./PathItem";
 import Pointer from "./Pointer";
 import Spray from "./Spray";
+import Eraser from "./Tool/Eraser";
 // import ToolsComponent from './Tools'
 
 interface PathItem {
@@ -103,6 +104,11 @@ const LabelComponent: React.FC = () => {
           />
 
           <BrushV2
+            activeTool={activeTool}
+            onClick={handleClickTool}
+            submitPath={submitPath}
+          />
+          <Eraser
             activeTool={activeTool}
             onClick={handleClickTool}
             submitPath={submitPath}

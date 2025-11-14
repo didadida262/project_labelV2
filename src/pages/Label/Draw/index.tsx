@@ -55,8 +55,8 @@ const DrawComponent: React.FC<DrawComponentProps> = (props) => {
     // 创建白板背景 - 填充整个视图区域
     const bounds = paper.view.bounds;
     const whiteboard = new paper.Path.Rectangle(bounds);
-    whiteboard.fillColor = new paper.Color("#FFFFFF");
-    whiteboard.strokeColor = new paper.Color("#E0E0E0");
+    whiteboard.fillColor = new paper.Color("#2D2D2D");
+    whiteboard.strokeColor = new paper.Color("#404040");
     whiteboard.strokeWidth = 1;
     // 标记为白板，防止被橡皮擦擦除
     whiteboard.data = { isWhiteboard: true };

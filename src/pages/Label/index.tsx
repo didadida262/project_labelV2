@@ -155,8 +155,16 @@ const LabelComponent: React.FC = () => {
       {/* <div>picturelist</div>
       </div> */}
 
-      <div className={cn("w-[200px] h-full rounded-[4px] border-[1px] border-solid border-borderSecondColor overflow-y-scroll")}>
-        <PathItem data={categories} />
+      <div className={cn("w-[200px] h-full rounded-[4px] border-[1px] border-solid border-borderSecondColor flex flex-col")}>
+        <div className="labels-header relative px-4 py-3 border-b border-borderSecondColor">
+          <h2 className="labels-title text-lg font-bold bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            标签列表
+          </h2>
+          <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-50"></div>
+        </div>
+        <div className="flex-1 overflow-y-scroll">
+          <PathItem data={categories} />
+        </div>
       </div>
     </div>
   );

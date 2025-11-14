@@ -164,5 +164,43 @@ h6 {
     background: #555; /* Y 轴滚动条滑块悬停颜色 */
   }
 
+  // 标签标题渐变动画
+  .labels-title {
+    background-size: 200% auto;
+    animation: gradient-shift 3s ease infinite;
+  }
 
+  @keyframes gradient-shift {
+    0%, 100% {
+      background-position: 0% center;
+    }
+    50% {
+      background-position: 100% center;
+    }
+  }
+
+  .labels-header {
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.1), transparent);
+      animation: shimmer 3s infinite;
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
 }

@@ -149,7 +149,7 @@ const LabelComponent: React.FC = () => {
       {/* <div>picturelist</div>
       </div> */}
 
-      <div className="w-[200px] h-full rounded-[4px] overflow-y-scroll">
+      <div className={cn("w-[200px] h-full rounded-[4px] border-[1px] border-solid border-borderSecondColor overflow-y-scroll")}>
         <PathItem data={categories} />
       </div>
     </div>

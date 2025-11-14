@@ -1,4 +1,4 @@
-# 🎨 Project LabelV2 - 图像标注工具
+# 🎨 Image Whiteboard - 图像白板工具
 
 <div align="center">
   <img src="https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React" />
@@ -8,8 +8,8 @@
 </div>
 
 <div align="center">
-  <h3>🖼️ 专业的图像标注工具</h3>
-  <p>基于 React + Paper.js 构建的现代化标注平台</p>
+  <h3>🖼️ 专业的图像白板工具</h3>
+  <p>基于 React + Paper.js 构建的现代化图像标注和绘图平台</p>
   
   <a href="https://project-label-v2.vercel.app/" target="_blank">
     <img src="https://img.shields.io/badge/🌐-在线演示-00C7B7?style=for-the-badge&logo=vercel&logoColor=white" alt="在线演示" />
@@ -18,7 +18,7 @@
 
 ## 项目概述
 
-Project LabelV2 是一个基于 React + TypeScript + Paper.js 开发的图像标注工具，提供丰富的绘图工具和标注功能。该项目主要用于图像标注、数据标注和可视化编辑等场景。
+Image Whiteboard 是一个基于 React + TypeScript + Paper.js 开发的图像白板工具，提供丰富的绘图工具和标注功能。该项目主要用于图像标注、数据标注、可视化编辑和在线绘图等场景。
 
 ## 🛠️ 技术栈
 
@@ -129,7 +129,7 @@ Project LabelV2 是一个基于 React + TypeScript + Paper.js 开发的图像标
 ## 📁 项目结构
 
 ```
-📦 project_labelV2
+📦 image-whiteboard
 ├── 🎨 src/
 │   ├── 🧩 components/           # 通用组件
 │   │   ├── 🎨 ui/              # UI 组件

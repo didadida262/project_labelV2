@@ -27,6 +27,36 @@ const RectComponent: React.FC<RectComponentProps> = (props) => {
   let first = new paper.Point(0, 0);
   let fillColor = null as any; // 存储当前绘制的填充颜色
   let strokeColor = null as any; // 存储当前绘制的边框颜色
+  let crosshair = null as any; // 十字光标
+  
+  // 创建十字光标
+  const createCrosshair = (point: paper.Point) => {
+    removeCrosshair();
+    const size = 15; // 十字光标的大小
+    // 水平线
+    const horizontalLine = new paper.Path.Line(
+      new paper.Point(point.x - size, point.y),
+      new paper.Point(point.x + size, point.y)
+    );
+    // 垂直线
+    const verticalLine = new paper.Path.Line(
+      new paper.Point(point.x, point.y - size),
+      new paper.Point(point.x, point.y + size)
+    );
+    // 组合成十字
+    crosshair = new paper.Group([horizontalLine, verticalLine]);
+    crosshair.strokeColor = "#666666";
+    crosshair.strokeWidth = 1.5;
+    crosshair.opacity = 0.8;
+  };
+  
+  // 移除十字光标
+  const removeCrosshair = () => {
+    if (crosshair) {
+      crosshair.remove();
+      crosshair = null;
+    }
+  };
   
   const removeSelection = () => {
     if (path) {
@@ -36,10 +66,13 @@ const RectComponent: React.FC<RectComponentProps> = (props) => {
   const initTool = () => {
     if (activeTool !== name) {
       tool && tool.remove();
+      removeCrosshair(); // 切换工具时移除十字光标
     } else {
       tool = new paper.Tool();
       tool.name = name;
       tool.onMouseDown = (e: paper.ToolEvent) => {
+        // 移除十字光标，开始绘制
+        removeCrosshair();
         // 每次开始绘制时生成新的随机颜色对
         const colorPair = getRandomColorPair();
         fillColor = colorPair.fillColor;
@@ -63,11 +96,16 @@ const RectComponent: React.FC<RectComponentProps> = (props) => {
         path.strokeWidth = 4; // 增加线条宽度
         path.fillColor = fillColor; // 使用相同的填充颜色
       };
-      tool.onMouseMove = (e: paper.ToolEvent) => {};
+      tool.onMouseMove = (e: paper.ToolEvent) => {
+        // 鼠标移动时显示十字光标
+        createCrosshair(e.point);
+      };
       tool.onMouseUp = (e: paper.ToolEvent) => {
         path.add(e.point);
         submitPath(path.clone());
         path.remove();
+        // 绘制完成后重新显示十字光标
+        createCrosshair(e.point);
       };
       tool.activate();
     }

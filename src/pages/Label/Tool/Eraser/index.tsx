@@ -25,15 +25,15 @@ const EraserComponent: React.FC<EraserComponentProps> = (props) => {
   const { activeTool, onClick, submitPath } = props;
   const { color } = useContext(ColorContext);
   const name = "eraser";
-  let tool = null as any;
-  let eraserRadius = 20; // 橡皮擦半径
-  let eraserIndicator = null as any; // 橡皮擦指示器
+  const toolRef = useRef<any>(null);
+  const eraserIndicatorRef = useRef<any>(null);
+  const eraserRadius = 20; // 橡皮擦半径
 
   // 创建橡皮擦指示器
   const createEraserIndicator = (point: paper.Point) => {
     removeEraserIndicator();
     // 创建一个圆形指示器显示橡皮擦范围
-    eraserIndicator = new paper.Path.Circle({
+    eraserIndicatorRef.current = new paper.Path.Circle({
       center: point,
       radius: eraserRadius,
       strokeColor: new paper.Color("#FF6B6B"),
@@ -45,40 +45,48 @@ const EraserComponent: React.FC<EraserComponentProps> = (props) => {
 
   // 移除橡皮擦指示器
   const removeEraserIndicator = () => {
-    if (eraserIndicator) {
-      eraserIndicator.remove();
-      eraserIndicator = null;
+    if (eraserIndicatorRef.current) {
+      try {
+        eraserIndicatorRef.current.remove();
+      } catch (e) {
+        // 如果已经移除，忽略错误
+      }
+      eraserIndicatorRef.current = null;
     }
   };
 
   const initTool = () => {
     if (activeTool !== name) {
-      tool && tool.remove();
+      // 切换工具时，清理工具和指示器
+      if (toolRef.current) {
+        toolRef.current.remove();
+        toolRef.current = null;
+      }
       removeEraserIndicator();
     } else {
-      tool = new paper.Tool();
-      tool.name = name;
+      toolRef.current = new paper.Tool();
+      toolRef.current.name = name;
       
-      tool.onMouseDown = (e: paper.ToolEvent) => {
+      toolRef.current.onMouseDown = (e: paper.ToolEvent) => {
         removeEraserIndicator();
         eraseAtPoint(e.point);
       };
       
-      tool.onMouseDrag = (e: paper.ToolEvent) => {
+      toolRef.current.onMouseDrag = (e: paper.ToolEvent) => {
         eraseAtPoint(e.point);
       };
       
-      tool.onMouseMove = (e: paper.ToolEvent) => {
+      toolRef.current.onMouseMove = (e: paper.ToolEvent) => {
         // 鼠标移动时显示橡皮擦指示器
         createEraserIndicator(e.point);
       };
       
-      tool.onMouseUp = (e: paper.ToolEvent) => {
+      toolRef.current.onMouseUp = (e: paper.ToolEvent) => {
         // 擦除完成后重新显示指示器
         createEraserIndicator(e.point);
       };
       
-      tool.activate();
+      toolRef.current.activate();
     }
   };
 
@@ -97,7 +105,7 @@ const EraserComponent: React.FC<EraserComponentProps> = (props) => {
           return false;
         }
         // 排除橡皮擦指示器本身
-        if (item === eraserIndicator) {
+        if (item === eraserIndicatorRef.current) {
           return false;
         }
         return true;
@@ -124,7 +132,14 @@ const EraserComponent: React.FC<EraserComponentProps> = (props) => {
   useEffect(
     () => {
       initTool();
-      return () => {};
+      return () => {
+        // 清理函数：组件卸载或依赖变化时清理
+        if (toolRef.current) {
+          toolRef.current.remove();
+          toolRef.current = null;
+        }
+        removeEraserIndicator();
+      };
     },
     [color]
   );
@@ -132,6 +147,14 @@ const EraserComponent: React.FC<EraserComponentProps> = (props) => {
   useEffect(
     () => {
       initTool();
+      return () => {
+        // 清理函数：切换工具时清理
+        if (toolRef.current) {
+          toolRef.current.remove();
+          toolRef.current = null;
+        }
+        removeEraserIndicator();
+      };
     },
     [activeTool]
   );

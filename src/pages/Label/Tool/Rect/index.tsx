@@ -6,7 +6,7 @@ import { BsTextareaResize } from "react-icons/bs";
 import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
 import { judeToolExisted } from "@/utils/paperjsWeapon";
 import { ColorContext } from "@/pages/Label/ColorProvider";
-import { getRandomColorPair } from "@/utils/randomColors";
+import { getRandomColorPair, getColorPairFromHex } from "@/utils/randomColors";
 import pattern from "@/styles/pattern";
 
 import "./index.scss";
@@ -19,7 +19,7 @@ interface RectComponentProps {
 
 const RectComponent: React.FC<RectComponentProps> = (props) => {
   const { activeTool, onClick, submitPath } = props;
-  const { color } = useContext(ColorContext);
+  const { color, isColorSelected } = useContext(ColorContext);
 
   const name = "rect";
   const toolRef = useRef<any>(null);
@@ -88,8 +88,10 @@ const RectComponent: React.FC<RectComponentProps> = (props) => {
       toolRef.current.onMouseDown = (e: paper.ToolEvent) => {
         // 移除十字光标，开始绘制
         removeCrosshair();
-        // 每次开始绘制时生成新的随机颜色对
-        const colorPair = getRandomColorPair();
+        // 如果用户选择了颜色，使用选择的颜色；否则使用随机颜色
+        const colorPair = isColorSelected 
+          ? getColorPairFromHex(color)
+          : getRandomColorPair();
         fillColorRef.current = colorPair.fillColor;
         strokeColorRef.current = colorPair.strokeColor;
         pathRef.current = new paper.Path({
@@ -142,7 +144,7 @@ const RectComponent: React.FC<RectComponentProps> = (props) => {
         removeSelection();
       };
     },
-    [color]
+    [color, isColorSelected]
   );
   
   useEffect(

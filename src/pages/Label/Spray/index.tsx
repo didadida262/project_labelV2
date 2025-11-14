@@ -1,10 +1,12 @@
 import { Button } from "antd";
 import paper from "paper";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useContext } from "react";
 import { BsCrosshair2 } from "react-icons/bs";
 
 import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
 import { getRandomColor } from "@/utils/common_weapons";
+import { ColorContext } from "@/pages/Label/ColorProvider";
+import { hexToRgba } from "@/utils/randomColors";
 
 import pattern from "../../../styles/pattern";
 import { judeToolExisted } from "../../../utils/paperjsWeapon";
@@ -22,6 +24,7 @@ const Spray: React.FC<SprayComponentProps> = (props) => {
     return a + (b - a) * t;
   }
   const { activeTool, onClick, submitPath } = props;
+  const { color, isColorSelected } = useContext(ColorContext);
   const name = "Spray";
   const toolRef = useRef<any>(null);
   const pathRef = useRef<any>(null);
@@ -53,7 +56,10 @@ const Spray: React.FC<SprayComponentProps> = (props) => {
         pathRef.current = new paper.CompoundPath({});
         
         toolRef.current.onMouseDown = (e: paper.ToolEvent) => {
-          colorRef.current = getRandomColor();
+          // 如果用户选择了颜色，使用选择的颜色；否则使用随机颜色
+          colorRef.current = isColorSelected 
+            ? hexToRgba(color, parseFloat(Math.random().toFixed(1)))
+            : getRandomColor();
           pathRef.current = new paper.Path();
           pathRef.current.fillColor = new paper.Color(colorRef.current);
           initPointRef.current = e.point;
@@ -68,10 +74,15 @@ const Spray: React.FC<SprayComponentProps> = (props) => {
 
           const pt = e.point.add(offset);
 
+          // 如果用户选择了颜色，使用选择的颜色（带随机透明度）；否则使用随机颜色
+          const fillColor = isColorSelected 
+            ? hexToRgba(color, parseFloat(Math.random().toFixed(1)))
+            : getRandomColor();
+
           new paper.Path.Circle({
             center: pt,
             radius: radius,
-            fillColor: new paper.Color(getRandomColor())
+            fillColor: new paper.Color(fillColor)
           });
         };
         
@@ -102,7 +113,7 @@ const Spray: React.FC<SprayComponentProps> = (props) => {
         pathRef.current = null;
       }
     };
-  }, []);
+  }, [color, isColorSelected]);
 
   useEffect(
     () => {

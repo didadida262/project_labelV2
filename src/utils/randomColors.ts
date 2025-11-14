@@ -84,3 +84,47 @@ export const getRandomColorPair = (): { fillColor: string; strokeColor: string }
   };
 };
 
+/**
+ * 将 hex 颜色转换为 rgba 格式
+ * @param hex hex 颜色字符串，如 "#FF0000" 或 "#F00"
+ * @param alpha 透明度，0-1之间
+ * @returns rgba 颜色字符串
+ */
+export const hexToRgba = (hex: string, alpha: number = 1): string => {
+  // 移除 # 符号
+  hex = hex.replace('#', '');
+  
+  // 处理 3 位 hex 颜色
+  if (hex.length === 3) {
+    hex = hex.split('').map(char => char + char).join('');
+  }
+  
+  // 转换为 RGB
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+/**
+ * 根据用户选择的颜色生成填充色和边框色对
+ * @param hexColor 用户选择的 hex 颜色
+ * @returns { fillColor: string, strokeColor: string }
+ */
+export const getColorPairFromHex = (hexColor: string): { fillColor: string; strokeColor: string } => {
+  return {
+    fillColor: hexToRgba(hexColor, 0.3), // 填充色透明度 0.3
+    strokeColor: hexToRgba(hexColor, 0.8) // 边框色透明度 0.8
+  };
+};
+
+/**
+ * 根据用户选择的颜色生成铅笔颜色
+ * @param hexColor 用户选择的 hex 颜色
+ * @returns rgba 颜色字符串
+ */
+export const getPencilColorFromHex = (hexColor: string): string => {
+  return hexToRgba(hexColor, 0.7); // 铅笔颜色透明度 0.7
+};
+

@@ -13,7 +13,7 @@ import { BsBrush } from "react-icons/bs";
 import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
 import { judeToolExisted } from "@/utils/paperjsWeapon";
 import { ColorContext } from "@/pages/Label/ColorProvider";
-import { getRandomPencilColor } from "@/utils/randomColors";
+import { getRandomPencilColor, getPencilColorFromHex } from "@/utils/randomColors";
 import pattern from "@/styles/pattern";
 
 import "./index.scss";
@@ -26,7 +26,7 @@ interface BrushComponentProps {
 
 const brushComponent: React.FC<BrushComponentProps> = (props) => {
   const { activeTool, onClick, submitPath } = props;
-  const { color } = useContext(ColorContext);
+  const { color, isColorSelected } = useContext(ColorContext);
   const name = "brush";
   const toolRef = useRef<any>(null);
   const circleRef = useRef<any>(null);
@@ -73,8 +73,10 @@ const brushComponent: React.FC<BrushComponentProps> = (props) => {
       pathRef.current = new paper.CompoundPath({});
       
       toolRef.current.onMouseDown = (e: paper.ToolEvent) => {
-        // 每次开始绘制时生成新的随机颜色
-        currentColorRef.current = getRandomPencilColor();
+        // 如果用户选择了颜色，使用选择的颜色；否则使用随机颜色
+        currentColorRef.current = isColorSelected 
+          ? getPencilColorFromHex(color)
+          : getRandomPencilColor();
         initPointRef.current = e.point;
       };
       
@@ -125,7 +127,7 @@ const brushComponent: React.FC<BrushComponentProps> = (props) => {
         }
       };
     },
-    [color]
+    [color, isColorSelected]
   );
   
   useEffect(

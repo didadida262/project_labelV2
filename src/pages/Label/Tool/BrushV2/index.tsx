@@ -22,47 +22,98 @@ const brushV2: React.FC<BrushV2ComponentProps> = (props) => {
   const { activeTool, onClick, submitPath } = props;
   const { color } = useContext(ColorContext);
   const name = "brushv2";
-  let initPoint = new paper.Point(0, 0);
-  let path = null as any;
-  let tool = null as any;
+  const toolRef = useRef<any>(null);
+  const pathRef = useRef<any>(null);
+  const initPointRef = useRef<paper.Point>(new paper.Point(0, 0));
 
   const initTool = () => {
     if (activeTool !== name) {
-      tool && tool.remove();
-      return;
+      // 切换工具时，清理工具和路径
+      if (toolRef.current) {
+        toolRef.current.remove();
+        toolRef.current = null;
+      }
+      if (pathRef.current) {
+        try {
+          pathRef.current.remove();
+        } catch (e) {
+          // 如果已经移除，忽略错误
+        }
+        pathRef.current = null;
+      }
+    } else {
+      toolRef.current = new paper.Tool();
+      toolRef.current.name = name;
+      pathRef.current = new paper.CompoundPath({});
+      
+      toolRef.current.onMouseDown = (e: paper.ToolEvent) => {
+        // 每次开始绘制时生成新的随机颜色
+        const randomColor = getRandomPencilColor();
+        pathRef.current = new paper.Path();
+        pathRef.current.fillColor = new paper.Color(randomColor);
+        initPointRef.current = e.point;
+      };
+      
+      toolRef.current.onMouseDrag = (e: paper.ToolEvent) => {
+        if (pathRef.current) {
+          pathRef.current.add(e.middlePoint.add(e.delta.rotate(90, new paper.Point(0, 0)).normalize().multiply(10)));
+          pathRef.current.insert(
+            0,
+            e.middlePoint.subtract(e.delta.rotate(90, new paper.Point(0, 0)).normalize().multiply(10))
+          );
+        }
+      };
+      
+      toolRef.current.onMouseUp = (e: paper.ToolEvent) => {
+        if (pathRef.current) {
+          submitPath(pathRef.current.clone());
+        }
+      };
+      
+      toolRef.current.activate();
     }
-    tool = new paper.Tool();
-    tool.name = name;
-    path = new paper.CompoundPath({});
-    tool.onMouseDown = (e: paper.ToolEvent) => {
-      // 每次开始绘制时生成新的随机颜色
-      const randomColor = getRandomPencilColor();
-      path = new paper.Path();
-      path.fillColor = randomColor;
-      initPoint = e.point;
-    };
-    tool.onMouseDrag = (e: paper.ToolEvent) => {
-      path.add(e.middlePoint.add(e.delta.rotate(90, new paper.Point(0, 0)).normalize().multiply(10)));
-      path.insert(
-        0,
-        e.middlePoint.subtract(e.delta.rotate(90, new paper.Point(0, 0)).normalize().multiply(10))
-      );
-    };
-    tool.onMouseUp = (e: paper.ToolEvent) => {
-      submitPath(path.clone());
-    };
-    tool.activate();
   };
+  
   useEffect(
     () => {
       initTool();
-      return () => {};
+      return () => {
+        // 清理函数：组件卸载或依赖变化时清理
+        if (toolRef.current) {
+          toolRef.current.remove();
+          toolRef.current = null;
+        }
+        if (pathRef.current) {
+          try {
+            pathRef.current.remove();
+          } catch (e) {
+            // 如果已经移除，忽略错误
+          }
+          pathRef.current = null;
+        }
+      };
     },
     [color]
   );
+  
   useEffect(
     () => {
       initTool();
+      return () => {
+        // 清理函数：切换工具时清理
+        if (toolRef.current) {
+          toolRef.current.remove();
+          toolRef.current = null;
+        }
+        if (pathRef.current) {
+          try {
+            pathRef.current.remove();
+          } catch (e) {
+            // 如果已经移除，忽略错误
+          }
+          pathRef.current = null;
+        }
+      };
     },
     [activeTool]
   );

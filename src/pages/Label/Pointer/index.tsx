@@ -25,10 +25,11 @@ interface PointerComponentProps {
 const pointerComponent: React.FC<PointerComponentProps> = (props) => {
   const { activeTool, onClick } = props;
   const name = "pointer";
-  let initPoint = new paper.Point(0, 0);
-  let cursorPoint = null as any;
-  let hitResult = null as any;
-  let tool = null as any;
+  const toolRef = useRef<any>(null);
+  const cursorPointRef = useRef<any>(null);
+  const initPointRef = useRef<paper.Point>(new paper.Point(0, 0));
+  const hitResultRef = useRef<any>(null);
+  
   const hitOptions = {
     // type: fill(类似矩形框)、segment（点）、pixel（raster）
     segments: true,
@@ -42,81 +43,115 @@ const pointerComponent: React.FC<PointerComponentProps> = (props) => {
 
   const createCursor = (point: paper.Point) => {
     removeCursor();
-    cursorPoint = new paper.Path.Circle({
+    cursorPointRef.current = new paper.Path.Circle({
       center: point,
       radius: 10,
-      strokeColor: "black",
+      strokeColor: new paper.Color("black"),
       strokeWidth: 5
     });
   };
+  
   const removeCursor = () => {
-    if (cursorPoint) {
-      cursorPoint.remove();
-      cursorPoint = null;
+    if (cursorPointRef.current) {
+      try {
+        cursorPointRef.current.remove();
+      } catch (e) {
+        // 如果已经移除，忽略错误
+      }
+      cursorPointRef.current = null;
     }
   };
   const handleDragView = (e: paper.ToolEvent) => {
-    const delta = initPoint.subtract(e.point);
+    const delta = initPointRef.current.subtract(e.point);
     const currentProject: paper.Project = paper.project;
     const currentCenter = currentProject.view.center;
     currentProject.view.center = currentCenter.add(delta);
   };
+  
   const handleDragPath = (e: paper.ToolEvent) => {
-    const delta = initPoint.subtract(e.point);
-    const path = hitResult.item;
-    const currentCenter = path.position;
-  };
-  const initTool = () => {
-    tool = new paper.Tool();
-    tool.name = name;
-    tool.onMouseDown = (e: paper.ToolEvent) => {
-      initPoint = e.point;
-      const activateProject = paper.project;
-      hitResult = activateProject.hitTest(e.point, hitOptions);
-    };
-    tool.onMouseDrag = (e: paper.ToolEvent) => {
-      if (!hitResult) {
-        return;
-      }
-      removeCursor();
-      switch (hitResult.type) {
-        case "segment":
-          const segment = hitResult.segment;
-          segment.point = e.point;
-          break;
-        case "fill":
-          handleDragPath(e);
-          break;
-        case "pixel":
-          // 此处针对底图
-          handleDragView(e);
-          break;
-      }
-    };
-    tool.onMouseMove = (e: paper.ToolEvent) => {
-      const activateProject = paper.project;
-      hitResult = activateProject.hitTest(e.point, hitOptions);
-      if (hitResult && hitResult.type === "segment") {
-        createCursor(e.point);
-      } else {
-        removeCursor();
-      }
-    };
-    tool.onMouseUp = (e: paper.ToolEvent) => {};
-    tool.activate();
-  };
-  const switchTool = () => {
-    if (activeTool !== name) return;
-    if (!judeToolExisted(paper, name)) {
-      initTool();
+    const delta = initPointRef.current.subtract(e.point);
+    if (hitResultRef.current && hitResultRef.current.item) {
+      const path = hitResultRef.current.item;
+      const currentCenter = path.position;
     }
   };
+  const initTool = () => {
+    if (activeTool !== name) {
+      // 切换工具时，清理工具和光标
+      if (toolRef.current) {
+        toolRef.current.remove();
+        toolRef.current = null;
+      }
+      removeCursor();
+    } else {
+      if (!judeToolExisted(paper, name)) {
+        toolRef.current = new paper.Tool();
+        toolRef.current.name = name;
+        
+        toolRef.current.onMouseDown = (e: paper.ToolEvent) => {
+          initPointRef.current = e.point;
+          const activateProject = paper.project;
+          hitResultRef.current = activateProject.hitTest(e.point, hitOptions);
+        };
+        
+        toolRef.current.onMouseDrag = (e: paper.ToolEvent) => {
+          if (!hitResultRef.current) {
+            return;
+          }
+          removeCursor();
+          switch (hitResultRef.current.type) {
+            case "segment":
+              const segment = hitResultRef.current.segment;
+              segment.point = e.point;
+              break;
+            case "fill":
+              handleDragPath(e);
+              break;
+            case "pixel":
+              // 此处针对底图
+              handleDragView(e);
+              break;
+          }
+        };
+        
+        toolRef.current.onMouseMove = (e: paper.ToolEvent) => {
+          const activateProject = paper.project;
+          hitResultRef.current = activateProject.hitTest(e.point, hitOptions);
+          if (hitResultRef.current && hitResultRef.current.type === "segment") {
+            createCursor(e.point);
+          } else {
+            removeCursor();
+          }
+        };
+        
+        toolRef.current.onMouseUp = (e: paper.ToolEvent) => {};
+        toolRef.current.activate();
+      }
+    }
+  };
+  
   useEffect(() => {
-    return () => {};
+    return () => {
+      // 清理函数：组件卸载时清理
+      if (toolRef.current) {
+        toolRef.current.remove();
+        toolRef.current = null;
+      }
+      removeCursor();
+    };
   }, []);
+  
   useEffect(
     () => {
-      switchTool();
+      initTool();
+      return () => {
+        // 清理函数：切换工具时清理
+        if (toolRef.current) {
+          toolRef.current.remove();
+          toolRef.current = null;
+        }
+        removeCursor();
+      };
     },
     [activeTool]
   );

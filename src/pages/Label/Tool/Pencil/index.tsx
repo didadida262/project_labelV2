@@ -28,46 +28,94 @@ const PencilComponent: React.FC<PencilComponentProps> = (props) => {
   const { activeTool, onClick, submitPath } = props;
   const { color } = useContext(ColorContext);
   const name = "pencil";
-  let path = {} as any;
-  let tool = null as any;
+  const toolRef = useRef<any>(null);
+  const pathRef = useRef<any>(null);
   
   const initTool = () => {
     if (activeTool !== name) {
-      tool && tool.remove();
+      // 切换工具时，清理工具和路径
+      if (toolRef.current) {
+        toolRef.current.remove();
+        toolRef.current = null;
+      }
+      if (pathRef.current) {
+        try {
+          pathRef.current.remove();
+        } catch (e) {
+          // 如果已经移除，忽略错误
+        }
+        pathRef.current = null;
+      }
     } else {
-      tool = new paper.Tool();
-      tool.name = name;
-      tool.onMouseDown = (e: paper.ToolEvent) => {
+      toolRef.current = new paper.Tool();
+      toolRef.current.name = name;
+      toolRef.current.onMouseDown = (e: paper.ToolEvent) => {
         // 每次开始绘制时生成新的随机颜色
         const randomColor = getRandomPencilColor();
-        path = new paper.Path({
-          strokeColor: randomColor,
+        pathRef.current = new paper.Path({
+          strokeColor: new paper.Color(randomColor),
           strokeWidth: 5
         });
-        path.add(e.point);
+        pathRef.current.add(e.point);
       };
-      tool.onMouseDrag = (e: paper.ToolEvent) => {
-        path.add(e.point);
+      toolRef.current.onMouseDrag = (e: paper.ToolEvent) => {
+        if (pathRef.current) {
+          pathRef.current.add(e.point);
+        }
       };
-      tool.onMouseMove = (e: paper.ToolEvent) => {};
-      tool.onMouseUp = (e: paper.ToolEvent) => {
-        path.add(e.point);
-        submitPath(path.clone());
-        path.remove();
+      toolRef.current.onMouseMove = (e: paper.ToolEvent) => {};
+      toolRef.current.onMouseUp = (e: paper.ToolEvent) => {
+        if (pathRef.current) {
+          pathRef.current.add(e.point);
+          submitPath(pathRef.current.clone());
+          pathRef.current.remove();
+          pathRef.current = null;
+        }
       };
-      tool.activate();
+      toolRef.current.activate();
     }
   };
+  
   useEffect(
     () => {
       initTool();
-      return () => {};
+      return () => {
+        // 清理函数：组件卸载或依赖变化时清理
+        if (toolRef.current) {
+          toolRef.current.remove();
+          toolRef.current = null;
+        }
+        if (pathRef.current) {
+          try {
+            pathRef.current.remove();
+          } catch (e) {
+            // 如果已经移除，忽略错误
+          }
+          pathRef.current = null;
+        }
+      };
     },
     [color]
   );
+  
   useEffect(
     () => {
       initTool();
+      return () => {
+        // 清理函数：切换工具时清理
+        if (toolRef.current) {
+          toolRef.current.remove();
+          toolRef.current = null;
+        }
+        if (pathRef.current) {
+          try {
+            pathRef.current.remove();
+          } catch (e) {
+            // 如果已经移除，忽略错误
+          }
+          pathRef.current = null;
+        }
+      };
     },
     [activeTool]
   );

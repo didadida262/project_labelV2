@@ -23,59 +23,105 @@ const Spray: React.FC<SprayComponentProps> = (props) => {
   }
   const { activeTool, onClick, submitPath } = props;
   const name = "Spray";
-  let initPoint = new paper.Point(0, 0);
-  let path = null as any;
-  let tool = null as any;
-  let color = getRandomColor();
+  const toolRef = useRef<any>(null);
+  const pathRef = useRef<any>(null);
+  const initPointRef = useRef<paper.Point>(new paper.Point(0, 0));
+  const colorRef = useRef<string>(getRandomColor());
   const minRadius = 5;
   const maxRadius = 20;
   const jitter = 40;
 
   const initTool = () => {
-    tool = new paper.Tool();
-    tool.name = name;
-    path = new paper.CompoundPath({});
-    tool.onMouseDown = (e: paper.ToolEvent) => {
-      color = getRandomColor();
-      path = new paper.Path();
-      path.fillColor = color;
-      initPoint = e.point;
-    };
-    tool.onMouseDrag = (e: paper.ToolEvent) => {
-      const radius = mix(minRadius, maxRadius, Math.random());
-      const offset = new paper.Point(
-        mix(-jitter, jitter, Math.random()),
-        mix(-jitter, jitter, Math.random())
-      );
+    if (activeTool !== name) {
+      // 切换工具时，清理工具和路径
+      if (toolRef.current) {
+        toolRef.current.remove();
+        toolRef.current = null;
+      }
+      if (pathRef.current) {
+        try {
+          pathRef.current.remove();
+        } catch (e) {
+          // 如果已经移除，忽略错误
+        }
+        pathRef.current = null;
+      }
+    } else {
+      if (!judeToolExisted(paper, name)) {
+        toolRef.current = new paper.Tool();
+        toolRef.current.name = name;
+        pathRef.current = new paper.CompoundPath({});
+        
+        toolRef.current.onMouseDown = (e: paper.ToolEvent) => {
+          colorRef.current = getRandomColor();
+          pathRef.current = new paper.Path();
+          pathRef.current.fillColor = new paper.Color(colorRef.current);
+          initPointRef.current = e.point;
+        };
+        
+        toolRef.current.onMouseDrag = (e: paper.ToolEvent) => {
+          const radius = mix(minRadius, maxRadius, Math.random());
+          const offset = new paper.Point(
+            mix(-jitter, jitter, Math.random()),
+            mix(-jitter, jitter, Math.random())
+          );
 
-      const pt = e.point.add(offset);
-      const t = Math.random();
+          const pt = e.point.add(offset);
 
-      let circle = new paper.Path.Circle({
-        center: pt,
-        radius: radius,
-        fillColor: getRandomColor()
-      });
-    };
-    tool.onMouseUp = (e: paper.ToolEvent) => {
-      submitPath(path.clone());
-    };
-    tool.activate();
-  };
-  const switchTool = () => {
-    if (activeTool !== name) return;
-    if (!judeToolExisted(paper, name)) {
-      initTool();
+          new paper.Path.Circle({
+            center: pt,
+            radius: radius,
+            fillColor: new paper.Color(getRandomColor())
+          });
+        };
+        
+        toolRef.current.onMouseUp = (e: paper.ToolEvent) => {
+          if (pathRef.current) {
+            submitPath(pathRef.current.clone());
+          }
+        };
+        
+        toolRef.current.activate();
+      }
     }
   };
 
   useEffect(() => {
-    return () => {};
+    return () => {
+      // 清理函数：组件卸载时清理
+      if (toolRef.current) {
+        toolRef.current.remove();
+        toolRef.current = null;
+      }
+      if (pathRef.current) {
+        try {
+          pathRef.current.remove();
+        } catch (e) {
+          // 如果已经移除，忽略错误
+        }
+        pathRef.current = null;
+      }
+    };
   }, []);
 
   useEffect(
     () => {
-      switchTool();
+      initTool();
+      return () => {
+        // 清理函数：切换工具时清理
+        if (toolRef.current) {
+          toolRef.current.remove();
+          toolRef.current = null;
+        }
+        if (pathRef.current) {
+          try {
+            pathRef.current.remove();
+          } catch (e) {
+            // 如果已经移除，忽略错误
+          }
+          pathRef.current = null;
+        }
+      };
     },
     [activeTool]
   );

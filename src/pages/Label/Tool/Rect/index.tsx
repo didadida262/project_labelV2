@@ -22,12 +22,12 @@ const RectComponent: React.FC<RectComponentProps> = (props) => {
   const { color } = useContext(ColorContext);
 
   const name = "rect";
-  let path = {} as any;
-  let tool = null as any;
-  let first = new paper.Point(0, 0);
-  let fillColor = null as any; // 存储当前绘制的填充颜色
-  let strokeColor = null as any; // 存储当前绘制的边框颜色
-  let crosshair = null as any; // 十字光标
+  const toolRef = useRef<any>(null);
+  const pathRef = useRef<any>(null);
+  const firstRef = useRef<paper.Point>(new paper.Point(0, 0));
+  const fillColorRef = useRef<string | null>(null);
+  const strokeColorRef = useRef<string | null>(null);
+  const crosshairRef = useRef<any>(null);
   
   // 创建十字光标
   const createCrosshair = (point: paper.Point) => {
@@ -44,83 +44,119 @@ const RectComponent: React.FC<RectComponentProps> = (props) => {
       new paper.Point(point.x, point.y + size)
     );
     // 组合成十字
-    crosshair = new paper.Group([horizontalLine, verticalLine]);
-    crosshair.strokeColor = "#666666";
-    crosshair.strokeWidth = 1.5;
-    crosshair.opacity = 0.8;
+    crosshairRef.current = new paper.Group([horizontalLine, verticalLine]);
+    crosshairRef.current.strokeColor = new paper.Color("#666666");
+    crosshairRef.current.strokeWidth = 1.5;
+    crosshairRef.current.opacity = 0.8;
   };
   
   // 移除十字光标
   const removeCrosshair = () => {
-    if (crosshair) {
-      crosshair.remove();
-      crosshair = null;
+    if (crosshairRef.current) {
+      try {
+        crosshairRef.current.remove();
+      } catch (e) {
+        // 如果已经移除，忽略错误
+      }
+      crosshairRef.current = null;
     }
   };
   
   const removeSelection = () => {
-    if (path) {
-      path.remove();
+    if (pathRef.current) {
+      try {
+        pathRef.current.remove();
+      } catch (e) {
+        // 如果已经移除，忽略错误
+      }
+      pathRef.current = null;
     }
   };
+  
   const initTool = () => {
     if (activeTool !== name) {
-      tool && tool.remove();
-      removeCrosshair(); // 切换工具时移除十字光标
+      // 切换工具时，清理工具和指示器
+      if (toolRef.current) {
+        toolRef.current.remove();
+        toolRef.current = null;
+      }
+      removeCrosshair();
+      removeSelection();
     } else {
-      tool = new paper.Tool();
-      tool.name = name;
-      tool.onMouseDown = (e: paper.ToolEvent) => {
+      toolRef.current = new paper.Tool();
+      toolRef.current.name = name;
+      toolRef.current.onMouseDown = (e: paper.ToolEvent) => {
         // 移除十字光标，开始绘制
         removeCrosshair();
         // 每次开始绘制时生成新的随机颜色对
         const colorPair = getRandomColorPair();
-        fillColor = colorPair.fillColor;
-        strokeColor = colorPair.strokeColor;
-        path = new paper.Path({
-          strokeColor: strokeColor,
+        fillColorRef.current = colorPair.fillColor;
+        strokeColorRef.current = colorPair.strokeColor;
+        pathRef.current = new paper.Path({
+          strokeColor: new paper.Color(strokeColorRef.current),
           strokeWidth: 4, // 增加线条宽度，从默认值改为4
-          fillColor: fillColor
+          fillColor: new paper.Color(fillColorRef.current)
         });
-        first = e.point;
+        firstRef.current = e.point;
       };
-      tool.onMouseDrag = (e: paper.ToolEvent) => {
+      toolRef.current.onMouseDrag = (e: paper.ToolEvent) => {
         removeSelection();
-        const width = e.point.x - first.x;
-        const height = e.point.y - first.y;
-        path = new paper.Path.Rectangle(
-          new paper.Point(first.x, first.y),
+        const width = e.point.x - firstRef.current.x;
+        const height = e.point.y - firstRef.current.y;
+        pathRef.current = new paper.Path.Rectangle(
+          new paper.Point(firstRef.current.x, firstRef.current.y),
           new paper.Size(width, height)
         );
-        path.strokeColor = strokeColor; // 使用与填充色匹配的边框颜色
-        path.strokeWidth = 4; // 增加线条宽度
-        path.fillColor = fillColor; // 使用相同的填充颜色
+        pathRef.current.strokeColor = new paper.Color(strokeColorRef.current!); // 使用与填充色匹配的边框颜色
+        pathRef.current.strokeWidth = 4; // 增加线条宽度
+        pathRef.current.fillColor = new paper.Color(fillColorRef.current!); // 使用相同的填充颜色
       };
-      tool.onMouseMove = (e: paper.ToolEvent) => {
+      toolRef.current.onMouseMove = (e: paper.ToolEvent) => {
         // 鼠标移动时显示十字光标
         createCrosshair(e.point);
       };
-      tool.onMouseUp = (e: paper.ToolEvent) => {
-        path.add(e.point);
-        submitPath(path.clone());
-        path.remove();
+      toolRef.current.onMouseUp = (e: paper.ToolEvent) => {
+        if (pathRef.current) {
+          pathRef.current.add(e.point);
+          submitPath(pathRef.current.clone());
+          pathRef.current.remove();
+          pathRef.current = null;
+        }
         // 绘制完成后重新显示十字光标
         createCrosshair(e.point);
       };
-      tool.activate();
+      toolRef.current.activate();
     }
   };
 
   useEffect(
     () => {
       initTool();
-      return () => {};
+      return () => {
+        // 清理函数：组件卸载或依赖变化时清理
+        if (toolRef.current) {
+          toolRef.current.remove();
+          toolRef.current = null;
+        }
+        removeCrosshair();
+        removeSelection();
+      };
     },
     [color]
   );
+  
   useEffect(
     () => {
       initTool();
+      return () => {
+        // 清理函数：切换工具时清理
+        if (toolRef.current) {
+          toolRef.current.remove();
+          toolRef.current = null;
+        }
+        removeCrosshair();
+        removeSelection();
+      };
     },
     [activeTool]
   );

@@ -28,61 +28,125 @@ const brushComponent: React.FC<BrushComponentProps> = (props) => {
   const { activeTool, onClick, submitPath } = props;
   const { color } = useContext(ColorContext);
   const name = "brush";
-  let initPoint = new paper.Point(0, 0);
-  let circle = null as any;
-  let path = null as any;
-  let tool = null as any;
-  let currentColor = null as any; // 存储当前绘制的颜色
+  const toolRef = useRef<any>(null);
+  const circleRef = useRef<any>(null);
+  const pathRef = useRef<any>(null);
+  const initPointRef = useRef<paper.Point>(new paper.Point(0, 0));
+  const currentColorRef = useRef<string | null>(null);
+
+  // 移除预览圆圈
+  const removeCircle = () => {
+    if (circleRef.current) {
+      try {
+        circleRef.current.remove();
+      } catch (e) {
+        // 如果已经移除，忽略错误
+      }
+      circleRef.current = null;
+    }
+  };
 
   const initTool = () => {
     if (activeTool !== name) {
-      tool && tool.remove();
-      return;
+      // 切换工具时，清理工具和预览圆圈
+      if (toolRef.current) {
+        toolRef.current.remove();
+        toolRef.current = null;
+      }
+      removeCircle();
+      if (pathRef.current) {
+        try {
+          pathRef.current.remove();
+        } catch (e) {
+          // 如果已经移除，忽略错误
+        }
+        pathRef.current = null;
+      }
+    } else {
+      toolRef.current = new paper.Tool();
+      toolRef.current.name = name;
+      circleRef.current = new paper.Path.Circle({
+        center: new paper.Point(0, 0),
+        radius: 10,
+        strokeColor: new paper.Color(color)
+      });
+      pathRef.current = new paper.CompoundPath({});
+      
+      toolRef.current.onMouseDown = (e: paper.ToolEvent) => {
+        // 每次开始绘制时生成新的随机颜色
+        currentColorRef.current = getRandomPencilColor();
+        initPointRef.current = e.point;
+      };
+      
+      toolRef.current.onMouseDrag = (e: paper.ToolEvent) => {
+        new paper.Path.Circle({
+          center: e.point,
+          radius: 10,
+          fillColor: new paper.Color(currentColorRef.current!)
+        });
+      };
+      
+      toolRef.current.onMouseMove = (e: paper.ToolEvent) => {
+        removeCircle();
+        circleRef.current = new paper.Path.Circle({
+          center: e.point,
+          radius: 10,
+          fillColor: new paper.Color(currentColorRef.current || color)
+        });
+      };
+      
+      toolRef.current.onMouseUp = (e: paper.ToolEvent) => {
+        if (pathRef.current) {
+          submitPath(pathRef.current.clone());
+        }
+      };
+      
+      toolRef.current.activate();
     }
-    tool = new paper.Tool();
-    tool.name = name;
-    circle = new paper.Path.Circle({
-      center: 0,
-      radius: 10,
-      strokeColor: color
-    });
-    path = new paper.CompoundPath({});
-    tool.onMouseDown = (e: paper.ToolEvent) => {
-      // 每次开始绘制时生成新的随机颜色
-      currentColor = getRandomPencilColor();
-      initPoint = e.point;
-    };
-    tool.onMouseDrag = (e: paper.ToolEvent) => {
-      new paper.Path.Circle({
-        center: e.point,
-        radius: 10,
-        fillColor: currentColor
-      });
-    };
-    tool.onMouseMove = (e: paper.ToolEvent) => {
-      circle.remove();
-      circle = new paper.Path.Circle({
-        center: e.point,
-        radius: 10,
-        fillColor: currentColor || color
-      });
-    };
-    tool.onMouseUp = (e: paper.ToolEvent) => {
-      submitPath(path.clone());
-    };
-    tool.activate();
   };
 
   useEffect(
     () => {
       initTool();
-      return () => {};
+      return () => {
+        // 清理函数：组件卸载或依赖变化时清理
+        if (toolRef.current) {
+          toolRef.current.remove();
+          toolRef.current = null;
+        }
+        removeCircle();
+        if (pathRef.current) {
+          try {
+            pathRef.current.remove();
+          } catch (e) {
+            // 如果已经移除，忽略错误
+          }
+          pathRef.current = null;
+        }
+      };
     },
     [color]
   );
+  
   useEffect(
     () => {
       initTool();
+      return () => {
+        // 清理函数：切换工具时清理
+        if (toolRef.current) {
+          toolRef.current.remove();
+          toolRef.current = null;
+        }
+        removeCircle();
+        if (pathRef.current) {
+          try {
+            pathRef.current.remove();
+          } catch (e) {
+            // 如果已经移除，忽略错误
+          }
+          pathRef.current = null;
+        }
+      };
     },
     [activeTool]
   );

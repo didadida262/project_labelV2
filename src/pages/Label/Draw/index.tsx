@@ -4,8 +4,6 @@ import { useState, useEffect, useRef } from "react";
 
 import { showPoint } from "@/utils/paperjsWeapon";
 
-import imgurl from "../../../assets/只狼.jpeg";
-
 import "./index.scss";
 
 interface DrawComponentProps {
@@ -49,11 +47,15 @@ const DrawComponent: React.FC<DrawComponentProps> = (props) => {
   const initCanvas = () => {
     paper.setup(canvasRef.current);
   };
-  const drawPic = () => {
-    const raster = new paper.Raster(imgurl);
-    raster.onLoad = () => {
-      raster.fitBounds(paper.view.bounds, false);
-    };
+  const drawWhiteboard = () => {
+    // 创建白板背景 - 填充整个视图区域
+    const bounds = paper.view.bounds;
+    const whiteboard = new paper.Path.Rectangle(bounds);
+    whiteboard.fillColor = "#FFFFFF";
+    whiteboard.strokeColor = "#E0E0E0";
+    whiteboard.strokeWidth = 1;
+    // 将白板移到最底层，确保标注在上面
+    whiteboard.sendToBack();
   };
   const changeZoom = (delta: number, p: paper.Point) => {
     let currentProject = paper.project;
@@ -87,7 +89,7 @@ const DrawComponent: React.FC<DrawComponentProps> = (props) => {
   };
   useEffect(() => {
     initCanvas();
-    drawPic();
+    drawWhiteboard();
     // addWheelListener();
     // return () => {
     //   canvasRef.current.removeListener("wheel");

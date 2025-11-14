@@ -32,11 +32,15 @@ const LabelComponent: React.FC = () => {
   const [activeTool, setactiveTool] = useState<string>("pencil");
   const [categories, setcategories] = useState<PathItem[]>([]);
   const [currentPath, setcurrentPath] = useState<paper.Path | null>(null);
-  const { color, setColor } = useContext(ColorContext);
+  const { color, setColor, resetColorSelection } = useContext(ColorContext);
   const [colorSelector, setcolorSelector] = useState<boolean>(false);
   const triggerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const handleClickTool = (tool: string): void => {
+    // 如果切换了工具，重置颜色选择状态，使用随机颜色
+    if (activeTool !== tool) {
+      resetColorSelection();
+    }
     setactiveTool(tool);
     message.success(`激活${tool}`);
   };

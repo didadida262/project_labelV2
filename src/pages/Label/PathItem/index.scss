@@ -9,4 +9,10 @@
     .PathItemComponent-item:hover {
         cursor: pointer;
     }
+    // 选中状态的高亮效果
+    :global(.path-item-selected) {
+        border-color: #3272C7 !important;
+        background-color: rgba(50, 114, 199, 0.15) !important;
+        box-shadow: 0 0 8px rgba(50, 114, 199, 0.4) !important;
+    }
 }

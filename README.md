@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5.4.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Paper.js-0.12.17-FF6B6B?style=for-the-badge&logo=javascript&logoColor=white" alt="Paper.js" />
-  <img src="https://img.shields.io/badge/Redux-2.2.1-764ABC?style=for-the-badge&logo=redux&logoColor=white" alt="Redux" />
+  <img src="https://img.shields.io/badge/Redux_Toolkit-2.2.1-764ABC?style=for-the-badge&logo=redux&logoColor=white" alt="Redux Toolkit" />
 </div>
 
 <div align="center">
@@ -141,9 +141,13 @@ Image Whiteboard 是一个基于 React + TypeScript + Paper.js 开发的图像�
 │   │       ├── 🎯 Center/      # 居中组件
 │   │       ├── 🖼️ Draw/        # 绘图区域
 │   │       ├── 🛠️ Tool/        # 绘图工具
-│   │       │   ├── 🖌️ Brush/   # 画笔工具
+│   │       │   ├── 👆 Pointer/ # 指针工具
 │   │       │   ├── ✏️ Pencil/ # 铅笔工具
-│   │       │   └── ⬜ Rect/    # 矩形工具
+│   │       │   ├── ⬜ Rect/    # 矩形工具
+│   │       │   ├── 🖌️ Brush/   # 画笔工具
+│   │       │   ├── 🖌️ BrushV2/ # 画笔工具 V2
+│   │       │   ├── 🎨 Spray/   # 喷枪工具
+│   │       │   └── 🧹 Eraser/  # 橡皮擦工具
 │   │       ├── 📝 PathItem/    # 路径项组件
 │   │       └── 🎨 ColorProvider/ # 颜色管理
 │   ├── 🔧 utils/               # 工具函数
@@ -158,17 +162,20 @@ Image Whiteboard 是一个基于 React + TypeScript + Paper.js 开发的图像�
 ## ⭐ 核心功能
 
 ### 🖼️ 1. 图像标注系统
-- **🛠️ 多工具支持**: 铅笔、画笔、矩形、喷枪等多种绘图工具
-- **🎨 颜色选择**: 实时颜色选择器，支持十六进制颜色输入
-- **📝 路径管理**: 标注路径的创建、编辑和删除
+- **🛠️ 多工具支持**: 指针、铅笔、画笔、矩形、喷枪、橡皮擦等多种绘图工具
+- **🎨 颜色选择**: 基于 react-colorful 的实时颜色选择器，支持十六进制颜色输入
+- **📝 路径管理**: 标注路径的创建、编辑、选择和删除
+- **🎯 智能选中**: 路径选中时显示基于路径颜色的半透明背景，直观展示选中状态
 - **📁 图像导入**: 支持导入图片进行标注
 
 ### ✏️ 2. 绘图工具
-- **✏️ 铅笔工具 (Pencil)**: 自由绘制线条
-- **🖌️ 画笔工具 (Brush)**: 圆形画笔，支持不同大小
-- **⬜ 矩形工具 (Rect)**: 绘制矩形框
-- **🎨 喷枪工具 (Spray)**: 喷枪效果绘制
 - **👆 指针工具 (Pointer)**: 选择和移动工具
+- **✏️ 铅笔工具 (Pencil)**: 自由绘制线条
+- **⬜ 矩形工具 (Rect)**: 绘制矩形框
+- **🖌️ 画笔工具 (Brush)**: 圆形画笔，支持不同大小
+- **🖌️ 画笔工具 V2 (BrushV2)**: 增强版画笔工具
+- **🎨 喷枪工具 (Spray)**: 喷枪效果绘制
+- **🧹 橡皮擦工具 (Eraser)**: 擦除已绘制的路径
 
 ### 🖼️ 3. 画布功能
 - **🔍 缩放控制**: 鼠标滚轮缩放
@@ -196,15 +203,22 @@ Image Whiteboard 是一个基于 React + TypeScript + Paper.js 开发的图像�
 ```
 
 ### 绘图工具组件
+- **Pointer**: 指针工具，用于选择和移动
 - **Pencil**: 铅笔工具，支持自由绘制
-- **Brush**: 画笔工具，圆形画笔效果
 - **Rect**: 矩形工具，绘制矩形框
+- **Brush**: 画笔工具，圆形画笔效果
+- **BrushV2**: 增强版画笔工具
 - **Spray**: 喷枪工具，粒子效果绘制
+- **Eraser**: 橡皮擦工具，擦除已绘制的路径
 
 ### PathItem (路径管理)
 ```typescript
 // 位置: src/pages/Label/PathItem/index.tsx
 // 功能: 管理所有标注路径，支持选择和删除
+// 特性: 
+//   - 直接使用 path.selected 状态管理选中状态
+//   - 选中时显示基于路径颜色的半透明背景
+//   - 点击路径项可切换选中状态
 ```
 
 ## 🚀 开发环境设置
@@ -282,10 +296,11 @@ yarn test
 ## 🚀 扩展功能
 
 ### ✅ 已实现
-- **🛠️ 多种绘图工具**
-- **🎨 颜色管理系统**
-- **📝 路径管理**
-- **💾 图片导出**
+- **🛠️ 多种绘图工具** (指针、铅笔、画笔、矩形、喷枪、橡皮擦)
+- **🎨 颜色管理系统** (基于 Context API 和 react-colorful)
+- **📝 路径管理** (创建、选择、删除，支持选中状态可视化)
+- **💾 图片导出** (支持导出为 PNG 格式)
+- **🎯 智能选中反馈** (选中路径显示半透明背景色)
 
 ### 🔮 可扩展
 - **🛠️ 更多绘图工具**（椭圆、多边形等）
@@ -317,13 +332,14 @@ yarn test
 ### 🎉 v0.1.0
 - **🚀 初始版本发布**
 - **🏷️ 基础标注功能**
-- **🛠️ 多种绘图工具**
-- **🎨 颜色管理**
-- **📝 路径管理**
+- **🛠️ 多种绘图工具** (指针、铅笔、画笔、矩形、喷枪、橡皮擦)
+- **🎨 颜色管理** (基于 Context API 和 react-colorful)
+- **📝 路径管理** (支持选中状态可视化)
+- **🎯 PathItem 组件优化** (简化选中状态管理，添加基于路径颜色的背景显示)
 
 ---
 
 <div align="center">
-  <p><em>最后更新: 2025年1月</em></p>
+  <p><em>最后更新: 2025年1月16日</em></p>
   <p>Made with ❤️ by didadida262</p>
 </div>

@@ -29,6 +29,8 @@ const pointerComponent: React.FC<PointerComponentProps> = (props) => {
   const cursorPointRef = useRef<any>(null);
   const initPointRef = useRef<paper.Point>(new paper.Point(0, 0));
   const hitResultRef = useRef<any>(null);
+  const panStartCenterRef = useRef<paper.Point>(new paper.Point(0, 0));
+  const dragModeRef = useRef<"none" | "pan" | "segment">("none");
   
   const hitOptions = {
     // type: fill(类似矩形框)、segment（点）、pixel（raster）
@@ -64,8 +66,7 @@ const pointerComponent: React.FC<PointerComponentProps> = (props) => {
   const handleDragView = (e: paper.ToolEvent) => {
     const delta = initPointRef.current.subtract(e.point);
     const currentProject: paper.Project = paper.project;
-    const currentCenter = currentProject.view.center;
-    currentProject.view.center = currentCenter.add(delta);
+    currentProject.view.center = panStartCenterRef.current.add(delta);
   };
   
   const handleDragPath = (e: paper.ToolEvent) => {
@@ -90,28 +91,25 @@ const pointerComponent: React.FC<PointerComponentProps> = (props) => {
         
         toolRef.current.onMouseDown = (e: paper.ToolEvent) => {
           initPointRef.current = e.point;
+          panStartCenterRef.current = paper.project.view.center.clone();
           const activateProject = paper.project;
           hitResultRef.current = activateProject.hitTest(e.point, hitOptions);
+          // 规则：命中节点就拖节点；否则（包括命中背景/路径/图片/空白）拖动画布
+          dragModeRef.current =
+            hitResultRef.current && hitResultRef.current.type === "segment"
+              ? "segment"
+              : "pan";
         };
         
         toolRef.current.onMouseDrag = (e: paper.ToolEvent) => {
-          if (!hitResultRef.current) {
+          removeCursor();
+          if (dragModeRef.current === "segment" && hitResultRef.current) {
+            const segment = hitResultRef.current.segment;
+            segment.point = e.point;
             return;
           }
-          removeCursor();
-          switch (hitResultRef.current.type) {
-            case "segment":
-              const segment = hitResultRef.current.segment;
-              segment.point = e.point;
-              break;
-            case "fill":
-              handleDragPath(e);
-              break;
-            case "pixel":
-              // 此处针对底图
-              handleDragView(e);
-              break;
-          }
+          // 默认拖动画布
+          handleDragView(e);
         };
         
         toolRef.current.onMouseMove = (e: paper.ToolEvent) => {
@@ -124,7 +122,9 @@ const pointerComponent: React.FC<PointerComponentProps> = (props) => {
           }
         };
         
-        toolRef.current.onMouseUp = (e: paper.ToolEvent) => {};
+        toolRef.current.onMouseUp = (e: paper.ToolEvent) => {
+          dragModeRef.current = "none";
+        };
         toolRef.current.activate();
       }
     }

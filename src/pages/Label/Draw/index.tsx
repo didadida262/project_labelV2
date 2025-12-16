@@ -14,7 +14,11 @@ const DrawComponent: React.FC<DrawComponentProps> = (props) => {
   const { activeTool } = props;
   const canvasRef = useRef(null) as any;
   const initPoint = useRef(new paper.Point(0, 0));
-  const [zoom, setZoom] = useState(1);
+  const wheelHandlerRef = useRef<(e: WheelEvent) => void>();
+  const rafIdRef = useRef<number | null>(null);
+  const targetZoomRef = useRef<number>(1);
+  const zoomAnchorViewRef = useRef<paper.Point>(new paper.Point(0, 0));
+  const zoomAnchorProjectRef = useRef<paper.Point>(new paper.Point(0, 0));
 
   const onMouseDown = (e: paper.ToolEvent) => {
     initPoint.current = e.point;
@@ -52,9 +56,13 @@ const DrawComponent: React.FC<DrawComponentProps> = (props) => {
     paper.setup(canvasRef.current);
   };
   const drawWhiteboard = () => {
-    // 创建白板背景 - 填充整个视图区域
-    const bounds = paper.view.bounds;
-    const whiteboard = new paper.Path.Rectangle(bounds);
+    // 创建“足够大”的白板背景，避免拖动画布时露出空白
+    const SIZE = 200000;
+    const whiteboardBounds = new paper.Rectangle(
+      new paper.Point(-SIZE / 2, -SIZE / 2),
+      new paper.Size(SIZE, SIZE)
+    );
+    const whiteboard = new paper.Path.Rectangle(whiteboardBounds);
     whiteboard.fillColor = new paper.Color("#2D2D2D");
     whiteboard.strokeColor = new paper.Color("#404040");
     whiteboard.strokeWidth = 1;
@@ -63,44 +71,94 @@ const DrawComponent: React.FC<DrawComponentProps> = (props) => {
     // 将白板移到最底层，确保标注在上面
     whiteboard.sendToBack();
   };
-  const changeZoom = (delta: number, p: paper.Point) => {
-    let currentProject = paper.project;
-    let view = currentProject.view;
-    let oldZoom = view.zoom;
-    let c = view.center;
-    let factor = 0.11 + zoom;
-
-    let newZoom = delta < 0 ? oldZoom * factor : oldZoom / factor;
-    let beta = oldZoom / newZoom;
-    let pc = p.subtract(c);
-    let a = p.subtract(pc.multiply(beta)).subtract(c);
-
-    return { zoom: newZoom, offset: a };
-  };
-  const addWheelListener = () => {
-    canvasRef.current.addEventListener("wheel", (event: WheelEvent) => {
-      event.preventDefault();
-      // 获取滚轮的 deltaY 属性，判断滚动方向
-      const delta = event.deltaY;
-      // // 更新视图的缩放比例和中心点
-      const viewPoint = {
-        x: event.offsetX,
-        y: event.offsetY
-      };
-      const newPoint = paper.project.view.viewToProject(viewPoint);
-      const newZoom = changeZoom(delta, newPoint).zoom;
-      paper.view.zoom = newZoom;
-      paper.view.center = newPoint;
-    });
-  };
   useEffect(() => {
     initCanvas();
     drawWhiteboard();
-    // addWheelListener();
-    // return () => {
-    //   canvasRef.current.removeListener("wheel");
-    // };
   }, []);
+
+  // 只在“手/指针工具（pointer）”下启用滚轮缩放；切换到其他工具时，不触发任何缩放逻辑
+  useEffect(() => {
+    const cleanup = () => {
+      if (rafIdRef.current != null) {
+        window.cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+      if (wheelHandlerRef.current) {
+        canvasRef.current?.removeEventListener("wheel", wheelHandlerRef.current as any);
+        wheelHandlerRef.current = undefined;
+      }
+    };
+
+    if (activeTool !== "pointer") {
+      cleanup();
+      return;
+    }
+
+    const MIN_ZOOM = 0.2;
+    const MAX_ZOOM = 8;
+    // 缩放步进（越接近 1 越“慢”）
+    const STEP = 1.08;
+    // 鼠标滚轮每次常见 deltaY 约 100；用指数映射能兼容触控板的细小 delta
+    const DELTA_DIVISOR = 100;
+    const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
+    targetZoomRef.current = paper.view.zoom;
+
+    const applyZoomAtAnchor = (zoom: number) => {
+      const view = paper.view;
+      view.zoom = zoom;
+      // 保持 anchorView 对应的项目坐标仍然是 anchorProject（缩放不“跳”）
+      const p2 = view.viewToProject(zoomAnchorViewRef.current);
+      const delta = zoomAnchorProjectRef.current.subtract(p2);
+      view.center = view.center.add(delta);
+    };
+
+    const tick = () => {
+      rafIdRef.current = null;
+      const view = paper.view;
+      const current = view.zoom;
+      const target = targetZoomRef.current;
+
+      const diff = target - current;
+      if (Math.abs(diff) < 0.0005) {
+        applyZoomAtAnchor(target);
+        return;
+      }
+
+      // 插值，制造丝滑动画（0.2~0.35 都可以；数值越大响应越快但越不丝滑）
+      const next = current + diff * 0.25;
+      applyZoomAtAnchor(next);
+      rafIdRef.current = window.requestAnimationFrame(tick);
+    };
+
+    const requestTick = () => {
+      if (rafIdRef.current != null) return;
+      rafIdRef.current = window.requestAnimationFrame(tick);
+    };
+
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      const view = paper.view;
+      const oldZoom = view.zoom;
+
+      // 记录缩放锚点：鼠标位置（view坐标）和对应的项目坐标（project坐标）
+      zoomAnchorViewRef.current = new paper.Point(event.offsetX, event.offsetY);
+      zoomAnchorProjectRef.current = view.viewToProject(zoomAnchorViewRef.current);
+
+      // 指数映射：deltaY 越大，缩放越多；同时兼容触控板细小 delta
+      const factor = Math.pow(STEP, -event.deltaY / DELTA_DIVISOR);
+      const newZoom = clamp(oldZoom * factor, MIN_ZOOM, MAX_ZOOM);
+      if (newZoom === oldZoom) return;
+
+      targetZoomRef.current = newZoom;
+      requestTick();
+    };
+
+    wheelHandlerRef.current = onWheel;
+    canvasRef.current?.addEventListener("wheel", onWheel, { passive: false });
+
+    return cleanup;
+  }, [activeTool]);
   useEffect(
     () => {
       setCursorPointer();

@@ -30,6 +30,7 @@ const pointerComponent: React.FC<PointerComponentProps> = (props) => {
   const initPointRef = useRef<paper.Point>(new paper.Point(0, 0));
   const hitResultRef = useRef<any>(null);
   const panStartCenterRef = useRef<paper.Point>(new paper.Point(0, 0));
+  const panStartViewPointRef = useRef<paper.Point>(new paper.Point(0, 0));
   const dragModeRef = useRef<"none" | "pan" | "segment">("none");
   
   const hitOptions = {
@@ -63,10 +64,26 @@ const pointerComponent: React.FC<PointerComponentProps> = (props) => {
       cursorPointRef.current = null;
     }
   };
+  const getViewPointFromEvent = (e: paper.ToolEvent): paper.Point => {
+    // 优先使用原生事件的 offsetX/Y（稳定，不受 view.center 改变影响）
+    const native = (e as any).event as MouseEvent | undefined;
+    if (native && typeof native.offsetX === "number" && typeof native.offsetY === "number") {
+      return new paper.Point(native.offsetX, native.offsetY);
+    }
+    // fallback：从 project 坐标转回 view 坐标
+    return paper.view.projectToView(e.point);
+  };
+
   const handleDragView = (e: paper.ToolEvent) => {
-    const delta = initPointRef.current.subtract(e.point);
-    const currentProject: paper.Project = paper.project;
-    currentProject.view.center = panStartCenterRef.current.add(delta);
+    const view = paper.view;
+    const currentViewPoint = getViewPointFromEvent(e);
+
+    // 关键：用 view 坐标计算 delta，再转换成 project 位移。
+    // viewToProject(p) = (p - size/2)/zoom + center，因此两点差值与 center 无关 -> 不会抖。
+    const deltaProject = view.viewToProject(panStartViewPointRef.current).subtract(
+      view.viewToProject(currentViewPoint)
+    );
+    view.center = panStartCenterRef.current.add(deltaProject);
   };
   
   const handleDragPath = (e: paper.ToolEvent) => {
@@ -92,6 +109,7 @@ const pointerComponent: React.FC<PointerComponentProps> = (props) => {
         toolRef.current.onMouseDown = (e: paper.ToolEvent) => {
           initPointRef.current = e.point;
           panStartCenterRef.current = paper.project.view.center.clone();
+          panStartViewPointRef.current = getViewPointFromEvent(e);
           const activateProject = paper.project;
           hitResultRef.current = activateProject.hitTest(e.point, hitOptions);
           // 规则：命中节点就拖节点；否则（包括命中背景/路径/图片/空白）拖动画布

@@ -8,7 +8,7 @@
 import { Button } from "antd";
 import paper from "paper";
 import React, { useRef, useEffect } from "react";
-import { BsCursor } from "react-icons/bs";
+import { BsHandIndex } from "react-icons/bs";
 
 import { ButtonCommon, EButtonType } from "@/components/ButtonCommon";
 
@@ -164,7 +164,7 @@ const pointerComponent: React.FC<PointerComponentProps> = (props) => {
         type={EButtonType.SIMPLE}
         onClick={() => onClick(name)}
       >
-        <BsCursor />
+        <BsHandIndex />
       </ButtonCommon>
     </div>
   );
